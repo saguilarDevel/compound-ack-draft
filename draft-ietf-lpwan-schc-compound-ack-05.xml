@@ -11,7 +11,7 @@
 <?rfc compact="yes"?>
 <?rfc toc="yes"?>
 
-<rfc ipr="trust200902" docName="draft-ietf-lpwan-schc-compound-ack-04" category="std" updates="RFC8724">
+<rfc ipr="trust200902" docName="draft-ietf-lpwan-schc-compound-ack-05" category="std" updates="RFC8724">
 
   <front>
    <title abbrev="SCHC Compound ACK">
@@ -176,9 +176,9 @@ bitmap with W number zero.</t>
 <t><figure title="SCHC Success ACK message format, as defined in RFC8724" anchor="success-ack-1byte"><artwork><![CDATA[
 
                |- SCHC ACK Header --|
-               + -------+---+------ + ------------ +
-               | RuleID | W | C=b'1 | b'0-pad(opt) |
-               + ------ + - + ----- + ------------ +
+               + -------+---+------ + ~~~~~~~~~~~~~~~~~
+               | RuleID | W | C=b'1 | padding as needed
+               + ------ + - + ----- + ~~~~~~~~~~~~~~~~~
 
 ]]></artwork></figure></t>
 
@@ -207,8 +207,7 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
 <t>If a SCHC sender gets a SCHC Compound ACK with invalid W’s, such as duplicate W values or W values not sent yet, it MUST discard the whole 
 SCHC Compound ACK message.</t>
 
-<t>Each different SCHC LPWAN technology profile MUST specify how the SCHC Compound ACK is different from the Receiver-Abort message as per 
-<xref target="RFC8724"/>, e.g., the Receiver-Abort message is padded with 1s with an extra byte appended at the end, while the SCHC Compound ACK is 0-padded.</t>
+<t>Note: because it has a C bit reset to 0, the SCHC Compound ACK is distinguishable from the Receiver-Abort message <xref target="RFC8724"/>, which has a C bit set to 1.</t>
 
 </section>
 
@@ -471,8 +470,6 @@ Annex D of <xref target="RFC8724"/>.</t>
 <t><list style="symbols">
 <t>Usage or not of the SCHC Compound ACK message.</t>
 <t>Usage or not of the compressed bitmap format in the last window of the SCHC Compound ACK message.</t>
-<t>Differentiation between SCHC Receiver-Abort and SCHC Compound ACK message, e.g., Receiver-Abort message padded with 1s with an extra byte 
-appended at the end, while the SCHC Compound ACK is 0-padded.</t>
 </list></t>
 
 </section>

@@ -23,9 +23,9 @@ The M bits with 0 value, signal the end of the SCHC Compound ACK.
 
     |--SCHC ACK Header--| W = w1 |...|      W = wi      | 
            |M bits|1 bit| N bits |   | M bits  | N bits |      
-    + ----------------- + ------ +...+ ------- + ------ + ---- + --- +
-    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap | 0..0 | pad |
-    + -----+------+---- + ------ +...+ ------- + ------ + ---- + --- +
+    + ----------------- + ------ +...+ ------- + ------ + ---- +
+    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap | 0..0 |
+    + -----+------+---- + ------ +...+ ------- + ------ + ---- +
                                        next L2 Word boundary ->|
        Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
@@ -71,7 +71,7 @@ Example of bitmap compression in the last bitmap with N = 7.
 
        Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
-                 Figure 2a: SCHC Compound ACK message format
+                 Figure C: SCHC Compound ACK message format
 ```
 
 Example of bitmap compression in the last bitmap with N = 7.
@@ -94,20 +94,6 @@ Example of bitmap compression in the last bitmap with N = 7.
 
        Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
-                 Figure 2a: SCHC Compound ACK message format
+                 Figure D: SCHC Compound ACK message format
 ```
 
-```text
-|--- SCHC ACK Header ----|--- Bitmap --|
-         |-- T --|-M-| 1 |6 5 4 3 2 1 0| (tile #)
-+--------+-------+---+---+-------------+
-| RuleID |  DTag | W |C=0|1 1 1 1 1 1 1|  with uncompressed Bitmap
-+--------+-------+---+---+-------------+
-   next L2 Word boundary ->|
-
-+-- ... -+- ... -+---+---+-+
-| RuleID |  DTag | W |C=0|1|                  transmitted SCHC ACK
-+-- ... -+- ... -+---+---+-+
-   next L2 Word boundary ->|
-
-```
