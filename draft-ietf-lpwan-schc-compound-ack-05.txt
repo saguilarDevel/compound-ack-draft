@@ -79,18 +79,18 @@ Table of Contents
    2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  SCHC Compound ACK . . . . . . . . . . . . . . . . . . . . . .   3
      3.1.  SCHC Compound ACK Message Format  . . . . . . . . . . . .   4
-     3.2.  SCHC Compound ACK Behaviour . . . . . . . . . . . . . . .   5
-       3.2.1.  Sender Behaviour  . . . . . . . . . . . . . . . . . .   6
-       3.2.2.  Receiver Behaviour  . . . . . . . . . . . . . . . . .   6
-     3.3.  SCHC Compound ACK Examples  . . . . . . . . . . . . . . .   7
-     3.4.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . .   8
-       3.4.1.  SCHC YANG Data Model Extension  . . . . . . . . . . .   8
-       3.4.2.  SCHC YANG Tree Extension  . . . . . . . . . . . . . .  10
-   4.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  10
-   5.  Security considerations . . . . . . . . . . . . . . . . . . .  11
-   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  11
-   7.  Normative References  . . . . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
+     3.2.  SCHC Compound ACK Behaviour . . . . . . . . . . . . . . .   6
+       3.2.1.  Sender Behaviour  . . . . . . . . . . . . . . . . . .   7
+       3.2.2.  Receiver Behaviour  . . . . . . . . . . . . . . . . .   7
+     3.3.  SCHC Compound ACK Examples  . . . . . . . . . . . . . . .   8
+     3.4.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . .   9
+       3.4.1.  SCHC YANG Data Model Extension  . . . . . . . . . . .   9
+       3.4.2.  SCHC YANG Tree Extension  . . . . . . . . . . . . . .  11
+   4.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  11
+   5.  Security considerations . . . . . . . . . . . . . . . . . . .  12
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  12
+   7.  Normative References  . . . . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -211,9 +211,9 @@ Internet-Draft              SCHC Compound ACK                 March 2022
    Compressed Bitmap for the last bitmap MUST be specified by the SCHC
    technology-specific profile.
 
-   Figure 3 shows a bitmap compression example of a SCHC Compound ACK,
-   where the bitmap of the last window (wi) indicates that the second
-   and the fourth tile have not been correctly received.
+   Figure 4 shows a bitmap compression example of a SCHC Compound ACK,
+   where the bitmap of the last window (wi) indicates that the first
+   tile has not been correctly received.
 
 
 
@@ -226,18 +226,74 @@ Zuniga, et al.         Expires September 22, 2022               [Page 4]
 Internet-Draft              SCHC Compound ACK                 March 2022
 
 
+       |--SCHC ACK Header--| W = w1 |...|      W = wi           |
+       + ----------------- + ------ +...+ ------ + ------------ +
+       |RuleID|W=b'w1|C=b'0| Bitmap |...| W=b'wi |0 1 1 1 1 1 1 |
+       + -----+------+---- + ------ +...+ ------ + ------------ +
+              |M bits|1 bit|            | M bits |
+                             next L2 Word boundary ->|
+                      SCHC Compound ACK with uncompressed Bitmap
+
+                           | W = w1 |...|  W = wi   |
+       + ----------------- + ------ +...+ ------ + - +
+       |RuleID|W=b'w1|C=b'0| Bitmap |...| W=b'wi |0 1|
+       + -----+------+---- + ------ +...+ ------ + - +
+                             next L2 Word boundary ->|
+                      Transmitted SCHC Compound ACK
+
+
+          Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+                Figure 3: SCHC Compound ACK message format
+
+   Figure 4 shows a bitmap compression example of a SCHC Compound ACK,
+   where the bitmap of the last window (wi) indicates that the second
+   and the fourth tile have not been correctly received.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022               [Page 5]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
        |--SCHC ACK Header--| W = w1 |...
        + ----------------- + ------ +...
        |RuleID|W=b'w1|C=b'0| Bitmap |...
        + ---- + ---- + --- + ------ +...
-              |M bits|1 bit| N bits |
+              |M bits|1 bit|
 
                   ...|      W = wi            |
-                  ...+ ------- + ------------ +
-                  ...|  W=b'wi |1 1 0 1 1 1 1 |
-                  ...+ ------- + ------------ +
-                     | M bits |    N bits    |
-         next L2 Word boundary ->|
+                  ...+ ------ + ------------ +
+                  ...| W=b'wi |1 1 0 1 1 1 1 |
+                  ...+ ------ + ------------ +
+                     | M bits |
+        next L2 Word boundary ->|
                       SCHC Compound ACK with uncompressed Bitmap
 
                            | W = w1 |...
@@ -256,7 +312,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
           Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
 
-                Figure 3: SCHC Compound ACK message format
+                Figure 4: SCHC Compound ACK message format
 
    If a SCHC sender gets a SCHC Compound ACK with invalid W's, such as
    duplicate W values or W values not sent yet, it MUST discard the
@@ -277,7 +333,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022               [Page 5]
+Zuniga, et al.         Expires September 22, 2022               [Page 6]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -333,7 +389,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022               [Page 6]
+Zuniga, et al.         Expires September 22, 2022               [Page 7]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -357,7 +413,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 3.3.  SCHC Compound ACK Examples
 
-   Figure 4 shows an example transmission of a SCHC Packet in ACK-on-
+   Figure 5 shows an example transmission of a SCHC Packet in ACK-on-
    Error mode using the SCHC Compound ACK.  In the example, the SCHC
    Packet is fragmented in 14 tiles, with N=3, WINDOW_SIZE=7, M=2 and
    two lost SCHC fragments.  Only 1 compound SCHC ACK is generated.
@@ -384,12 +440,12 @@ Internet-Draft              SCHC Compound ACK                 March 2022
              |<--- ACK, W=1, C=1 ---| C=1
            (End)
 
-           Figure 4: SCHC Compound ACK message sequence example
+           Figure 5: SCHC Compound ACK message sequence example
 
 
 
 
-Zuniga, et al.         Expires September 22, 2022               [Page 7]
+Zuniga, et al.         Expires September 22, 2022               [Page 8]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -400,7 +456,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     + ------ + ------ + -- + ------- + ---- + ------- + ------ + --- +
 
 
-   Figure 5: SCHC Compound ACK message format example: Losses are found
+   Figure 6: SCHC Compound ACK message format example: Losses are found
                            in windows 00 and 01
 
 3.4.  SCHC Compound ACK YANG Data Model
@@ -445,7 +501,7 @@ module ietf-schc-compound-ack {
 
 
 
-Zuniga, et al.         Expires September 22, 2022               [Page 8]
+Zuniga, et al.         Expires September 22, 2022               [Page 9]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -501,7 +557,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022               [Page 9]
+Zuniga, et al.         Expires September 22, 2022              [Page 10]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -534,7 +590,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 <CODE ENDS>
 
 
-          Figure 6: SCHC YANG Data Model - Compound ACK extension
+          Figure 7: SCHC YANG Data Model - Compound ACK extension
 
 3.4.2.  SCHC YANG Tree Extension
 
@@ -544,7 +600,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     +--rw bitmap-format?   schc-compound-ack:bitmap-format-type
 
 
-             Figure 7: SCHC YANG Tree - Compound ACK extension
+             Figure 8: SCHC YANG Tree - Compound ACK extension
 
 4.  SCHC Compound ACK Parameters
 
@@ -557,7 +613,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022              [Page 10]
+Zuniga, et al.         Expires September 22, 2022              [Page 11]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -613,7 +669,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022              [Page 11]
+Zuniga, et al.         Expires September 22, 2022              [Page 12]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -669,7 +725,7 @@ Authors' Addresses
 
 
 
-Zuniga, et al.         Expires September 22, 2022              [Page 12]
+Zuniga, et al.         Expires September 22, 2022              [Page 13]
 
 Internet-Draft              SCHC Compound ACK                 March 2022
 
@@ -725,4 +781,4 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022              [Page 13]
+Zuniga, et al.         Expires September 22, 2022              [Page 14]
