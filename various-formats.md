@@ -84,11 +84,11 @@ Example of bitmap compression in the last bitmap with N = 7.
            |M bits|1 bit| N bits |    | M bits |    N bits    |
                          next L2 Word boundary ->|
                          
-                        | W = w1 |...|      W = wi            |
-    + ----------------- + ------ +...+ ------- + ------------ + -- +
-    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi |1 1 0 1 1 1 1 |pad.|     transmitted SCHC Compound ACK
-    + -----+------+---- + ------ +...+ ------- + ------------ + -- +
-                         next L2 Word boundary ->|<--- L2 Word --->|
+                        | W = w1 |...|      W = wi            | M bits |
+    + ----------------- + ------ +...+ ------- + ------------ + ------ + --- +
+    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi |1 1 0 1 1 1 1 | 00..00 | pad |     transmitted SCHC Compound ACK
+    + -----+------+---- + ------ +...+ ------- + ------------ + ------ + --- +
+                         next L2 Word boundary ->|<-------- L2 Word -------->|
 
 
 

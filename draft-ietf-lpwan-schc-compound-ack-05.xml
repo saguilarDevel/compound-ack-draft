@@ -164,7 +164,7 @@ corresponding window number.
 contiguous. However, the window numbers and corresponding bitmaps included in the SCHC Compound ACK message
 MUST be ordered from the lowest-numbered to the highest-numbered window. Hence, if the the bitmap of window number zero
 is present in the SCHC Compound ACK message, it MUST always be the first one in order and its W number MUST be 
-placed in-between the Rule ID and the C bit. This also avoids confusing any '0s' padding bits following the first 
+placed in-between the Rule ID and the C bit. This also avoids confusing the M '0s' padding bits following the first
 bitmap with W number zero.</t>
 
 
@@ -176,7 +176,7 @@ bitmap with W number zero.</t>
 <t><figure title="SCHC Success ACK message format, as defined in RFC8724" anchor="success-ack-1byte"><artwork><![CDATA[
 
                |- SCHC ACK Header --|
-               + -------+---+------ + ~~~~~~~~~~~~~~~~~
+               + -------+ - + ----- + ~~~~~~~~~~~~~~~~~
                | RuleID | W | C=b'1 | padding as needed
                + ------ + - + ----- + ~~~~~~~~~~~~~~~~~
 
@@ -190,12 +190,13 @@ The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byt
 
 <t><figure title="SCHC Compound ACK message format" anchor="compound-ack-1byte"><artwork><![CDATA[
 
- |--SCHC ACK Header--| W = w1 |...|      W = wi      |
- +-------------------+ ------ +...+ ------- + ------ +------------+
- |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap |b'0-pad(opt)|
- +------+------+-----+ ------ +...+ ------- + ------ +------------+
- 
-    Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+    |--SCHC ACK Header--| W = w1 |...|      W = wi      |
+           |M bits|1 bit|        |...| M bits  |        | M bits |
+    + ----------------- + ------ +...+ ------- + ------ + ------ + --- +
+    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap | 00..00 | pad |
+    + -----+------+---- + ------ +...+ ------- + ------ + ------ + --- +
+                              next L2 Word boundary ->|<-- L2 Word --->|
+       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 		
 ]]></artwork></figure></t>
 
@@ -203,6 +204,42 @@ The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byt
 <t>The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for intermediate windows/bitmaps (i.e., bitmaps that are not the last one), and 
 therefore intermediate bitmaps fields MUST be of size WINDOW_SIZE. Hence, the SCHC Compound ACK MAY use a Compressed Bitmap format only for the last bitmap. 
 The optional usage of this Compressed Bitmap for the last bitmap MUST be specified by the SCHC technology-specific profile.</t>
+
+<t><xref target="compound-ack-compressed-bitmap"/> shows a bitmap compression example of a SCHC Compound ACK,
+    where the bitmap of the last window (wi) indicates that the second and the fourth tile have not been correctly
+    received.</t>
+<t><figure title="SCHC Compound ACK message format" anchor="compound-ack-compressed-bitmap"><artwork><![CDATA[
+
+    |--SCHC ACK Header--| W = w1 |...
+    + ----------------- + ------ +...
+    |RuleID|W=b'w1|C=b'0| Bitmap |...
+    + ---- + ---- + --- + ------ +...
+           |M bits|1 bit| N bits |
+
+               ...|      W = wi            |
+               ...+ ------- + ------------ +
+               ...|  W=b'wi |1 1 0 1 1 1 1 |
+               ...+ ------- + ------------ +
+                  | M bits |    N bits    |
+      next L2 Word boundary ->|
+                   SCHC Compound ACK with uncompressed Bitmap
+
+                        | W = w1 |...
+    + ----------------- + ------ +...
+    |RuleID|W=b'w1|C=b'0| Bitmap |...
+    + ---- + ---- + --- + ------ +...
+
+        ...|      W = wi            | M bits |
+        ...+ ------- + ------------ + ------ + --- +
+        ...|  W=b'wi |1 1 0 1 1 1 1 | 00..00 | pad |
+        ...+ ------- + ------------ + ------ + --- +
+next L2 Word boundary ->|<-------- L2 Word -------->|
+
+                   Transmitted SCHC Compound ACK
+
+       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+]]></artwork></figure></t>
 
 <t>If a SCHC sender gets a SCHC Compound ACK with invalid W’s, such as duplicate W values or W values not sent yet, it MUST discard the whole 
 SCHC Compound ACK message.</t>
@@ -313,10 +350,10 @@ Only 1 compound SCHC ACK is generated.</t>
 <t><figure title="SCHC Compound ACK message format example: Losses are found in windows 00 and 01" anchor="compound-ack-fmt-ex"><artwork><![CDATA[
     
 	
- |-- SCHC ACK Header ---|- W=00 --|----- W=01 -----|
- + -------------------- + ------- + ---- + ------- + ------------- +
- | RuleID | W=00  | C=0 | 1111011 | W=01 | 1111101 | b'0-pad (opt) |
- + ------ + ------ + -- + ------- + ---- + ------- + ------------- +
+ |-- SCHC ACK Header ---|- W=00 --|----- W=01 -----| M bits |
+ + -------------------- + ------- + ---- + ------- + ------ + --- +
+ | RuleID | W=00  | C=0 | 1111011 | W=01 | 1111101 | 00..00 | pad |
+ + ------ + ------ + -- + ------- + ---- + ------- + ------ + --- +
 
 ]]></artwork></figure></t>
 
