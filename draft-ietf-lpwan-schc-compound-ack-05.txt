@@ -189,7 +189,9 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
    In case SCHC Fragment losses are found in any of the windows of the
    SCHC Packet, the SCHC Compound ACK MAY be used.  The SCHC Compound
-   ACK message format is shown in Figure 2.
+   ACK message format is shown in Figure 2.  If more than M padding bits
+   are needed, the first M bits MUST be 0-padded.  The M bits with 0
+   value, signal the end of the SCHC Compound ACK.
 
 
     |--SCHC ACK Header--| W = w1 |...|      W = wi      |
@@ -203,17 +205,15 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
                 Figure 2: SCHC Compound ACK message format
 
-   The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for
-   intermediate windows/bitmaps (i.e., bitmaps that are not the last
-   one), and therefore intermediate bitmaps fields MUST be of size
-   WINDOW_SIZE.  Hence, the SCHC Compound ACK MAY use a Compressed
-   Bitmap format only for the last bitmap.  The optional usage of this
-   Compressed Bitmap for the last bitmap MUST be specified by the SCHC
-   technology-specific profile.
+   Figure 3 show the case when the required padding bits are less than M
+   bits.  In this case, any padding value MAY be added, as there are no
+   M bits to indicate any window value, nor bitmap.
 
-   Figure 4 shows a bitmap compression example of a SCHC Compound ACK,
-   where the bitmap of the last window (wi) indicates that the first
-   tile has not been correctly received.
+
+
+
+
+
 
 
 
@@ -226,6 +226,30 @@ Zuniga, et al.         Expires September 22, 2022               [Page 4]
 Internet-Draft              SCHC Compound ACK                 March 2022
 
 
+       |--SCHC ACK Header--| W = w1 |...|      W = wi      |
+       + ----------------- + ------ +...+ ------- + ------ + --- +
+       |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap | pad |
+       + -----+------+---- + ------ +...+ ------- + ------ + --- +
+              |M bits|1 bit| N bits |    | M bits | N bits | M bits |
+                                         next L2 Word boundary ->|
+          Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+
+    Figure 3: SCHC Compound ACK message format with less than M padding
+                                   bits
+
+   The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for
+   intermediate windows/bitmaps (i.e., bitmaps that are not the last
+   one), and therefore intermediate bitmaps fields MUST be of size
+   WINDOW_SIZE.  Hence, the SCHC Compound ACK MAY use a Compressed
+   Bitmap format only for the last bitmap.  The optional usage of this
+   Compressed Bitmap for the last bitmap MUST be specified by the SCHC
+   technology-specific profile.
+
+   Figure 5 shows a bitmap compression example of a SCHC Compound ACK,
+   where the bitmap of the last window (wi) indicates that the first
+   tile has not been correctly received.
+
        |--SCHC ACK Header--| W = w1 |...|      W = wi           |
        + ----------------- + ------ +...+ ------ + ------------ +
        |RuleID|W=b'w1|C=b'0| Bitmap |...| W=b'wi |0 1 1 1 1 1 1 |
@@ -234,7 +258,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
                              next L2 Word boundary ->|
                       SCHC Compound ACK with uncompressed Bitmap
 
-                           | W = w1 |...|  W = wi   |
+                           | W = w1 |...|   W = wi   |
        + ----------------- + ------ +...+ ------ + - +
        |RuleID|W=b'w1|C=b'0| Bitmap |...| W=b'wi |0 1|
        + -----+------+---- + ------ +...+ ------ + - +
@@ -244,35 +268,11 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
           Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
-                Figure 3: SCHC Compound ACK message format
+     Figure 4: SCHC Compound ACK message format with compressed bitmap
 
-   Figure 4 shows a bitmap compression example of a SCHC Compound ACK,
+   Figure 5 shows a bitmap compression example of a SCHC Compound ACK,
    where the bitmap of the last window (wi) indicates that the second
    and the fourth tile have not been correctly received.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -288,7 +288,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
        + ---- + ---- + --- + ------ +...
               |M bits|1 bit|
 
-                  ...|      W = wi            |
+                  ...|      W = wi           |
                   ...+ ------ + ------------ +
                   ...| W=b'wi |1 1 0 1 1 1 1 |
                   ...+ ------ + ------------ +
@@ -301,18 +301,18 @@ Internet-Draft              SCHC Compound ACK                 March 2022
        |RuleID|W=b'w1|C=b'0| Bitmap |...
        + ---- + ---- + --- + ------ +...
 
-           ...|      W = wi            | M bits |
-           ...+ ------- + ------------ + ------ + --- +
-           ...|  W=b'wi |1 1 0 1 1 1 1 | 00..00 | pad |
-           ...+ ------- + ------------ + ------ + --- +
-   next L2 Word boundary ->|<-------- L2 Word -------->|
+                  ...|     W = wi            | M bits |
+                  ...+ ------ + ------------ + ------ + --- +
+                  ...| W=b'wi |1 1 0 1 1 1 1 | 00..00 | pad |
+                  ...+ ------ + ------------ + ------ + --- +
+        next L2 Word boundary ->|<-------- L2 Word -------->|
 
                       Transmitted SCHC Compound ACK
 
           Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
 
-                Figure 4: SCHC Compound ACK message format
+     Figure 5: SCHC Compound ACK message format with compressed bitmap
 
    If a SCHC sender gets a SCHC Compound ACK with invalid W's, such as
    duplicate W values or W values not sent yet, it MUST discard the
@@ -369,7 +369,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
    o  (...)
 
-   o  the fragment sender MUST resend SCHC Fragment messages containing
+   o  the fragment sender MUST send SCHC Fragment messages containing
       all the tiles of all the windows that are reported missing in the
       SCHC Compound ACK.
 
@@ -413,7 +413,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 3.3.  SCHC Compound ACK Examples
 
-   Figure 5 shows an example transmission of a SCHC Packet in ACK-on-
+   Figure 6 shows an example transmission of a SCHC Packet in ACK-on-
    Error mode using the SCHC Compound ACK.  In the example, the SCHC
    Packet is fragmented in 14 tiles, with N=3, WINDOW_SIZE=7, M=2 and
    two lost SCHC fragments.  Only 1 compound SCHC ACK is generated.
@@ -440,7 +440,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
              |<--- ACK, W=1, C=1 ---| C=1
            (End)
 
-           Figure 5: SCHC Compound ACK message sequence example
+           Figure 6: SCHC Compound ACK message sequence example
 
 
 
@@ -456,7 +456,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     + ------ + ------ + -- + ------- + ---- + ------- + ------ + --- +
 
 
-   Figure 6: SCHC Compound ACK message format example: Losses are found
+   Figure 7: SCHC Compound ACK message format example: Losses are found
                            in windows 00 and 01
 
 3.4.  SCHC Compound ACK YANG Data Model
@@ -590,7 +590,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 <CODE ENDS>
 
 
-          Figure 7: SCHC YANG Data Model - Compound ACK extension
+          Figure 8: SCHC YANG Data Model - Compound ACK extension
 
 3.4.2.  SCHC YANG Tree Extension
 
@@ -600,7 +600,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     +--rw bitmap-format?   schc-compound-ack:bitmap-format-type
 
 
-             Figure 8: SCHC YANG Tree - Compound ACK extension
+             Figure 9: SCHC YANG Tree - Compound ACK extension
 
 4.  SCHC Compound ACK Parameters
 
