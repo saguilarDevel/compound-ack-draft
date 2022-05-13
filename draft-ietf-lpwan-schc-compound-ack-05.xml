@@ -162,10 +162,9 @@ corresponding window number.
 
 <t>The SCHC Compound ACK groups the window number (W) with its corresponding bitmap. Windows do not need to be 
 contiguous. However, the window numbers and corresponding bitmaps included in the SCHC Compound ACK message
-MUST be ordered from the lowest-numbered to the highest-numbered window. Hence, if the the bitmap of window number zero
+MUST be ordered from the lowest-numbered to the highest-numbered window. Hence, if the bitmap of window number zero
 is present in the SCHC Compound ACK message, it MUST always be the first one in order and its W number MUST be 
-placed in-between the Rule ID and the C bit. This also avoids confusing the M '0s' padding bits following the first
-bitmap with W number zero.</t>
+placed in the SCHC ACK Header.</t>
 
 
 
@@ -175,10 +174,11 @@ bitmap with W number zero.</t>
 
 <t><figure title="SCHC Success ACK message format, as defined in RFC8724" anchor="success-ack-1byte"><artwork><![CDATA[
 
-               |- SCHC ACK Header --|
-               + -------+ - + ----- + ~~~~~~~~~~~~~~~~~
-               | RuleID | W | C=b'1 | padding as needed
-               + ------ + - + ----- + ~~~~~~~~~~~~~~~~~
+               |--- SCHC ACK Header ---|
+                        |-  T -|-M-| 1 |
+               +--------+------+---+---+~~~~~~~~~~~~~~~~~~
+               | RuleID | DTag | W |C=1| padding as needed
+               +--------+------+---+---+~~~~~~~~~~~~~~~~~~
 
 ]]></artwork></figure></t>
 
@@ -186,35 +186,38 @@ bitmap with W number zero.</t>
 <t>In case SCHC Fragment losses are found in any of the windows of the SCHC Packet, the SCHC Compound ACK MAY be used.
 The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byte"/>.
     If more than M padding bits are needed, the first M bits MUST be 0-padded.
-The M bits with 0 value, signal the end of the SCHC Compound ACK.
+The M bits with 0 value signal the end of the SCHC Compound ACK.
+    To avoid confusing the M '0s' padding bits with Window number 0, if present in the SCHC Compound ACK, Window number 0 MUST be placed as w1.
+    The RECOMMENDED value for extra padding bits is 0.
 
 </t>
 
 
 <t><figure title="SCHC Compound ACK message format" anchor="compound-ack-1byte"><artwork><![CDATA[
 
-    |--SCHC ACK Header--| W = w1 |...|      W = wi      |
-           |M bits|1 bit|        |...| M bits  |        | M bits |
-    + ----------------- + ------ +...+ ------- + ------ + ------ + --- +
-    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap | 00..00 | pad |
-    + -----+------+---- + ------ +...+ ------- + ------ + ------ + --- +
-                              next L2 Word boundary ->|<-- L2 Word --->|
-       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+  |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
+         |--T-|---M--|-1-|        |...|---M--|        |---M--|
+  +------+----+------+---+--------+...+------+--------+------+-----+
+  |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |00..00| pad |
+  +------+----+------+---+--------+...+----- +--------+------+-----+
+                            next L2 Word boundary ->|<-- L2 Word ->|
+     Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 		
 ]]></artwork></figure></t>
 
 <t> <xref target="compound-ack-less-M-padding"/> show the case when the required padding bits are less than M bits.
-    In this case, any padding value MAY be added, as there are no M bits to indicate any window value, nor bitmap.
+    In this case, any padding value MAY be added, as there are no M bits to indicate any window value, nor bitmap, signaling the end of the SCHC Compound ACK.
+    The RECOMMENDED padding value is 0.
 </t>
 
 <t><figure title="SCHC Compound ACK message format with less than M padding bits" anchor="compound-ack-less-M-padding"><artwork><![CDATA[
-    |--SCHC ACK Header--| W = w1 |...|      W = wi      |
-    + ----------------- + ------ +...+ ------- + ------ + --- +
-    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap | pad |
-    + -----+------+---- + ------ +...+ ------- + ------ + --- +
-           |M bits|1 bit| N bits |    | M bits | N bits | M bits |
-                                      next L2 Word boundary ->|
-       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+  |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
+         |--T-|---M--|-1-|        |...|---M--|        |---M--|
+  +------+----+------+---+--------+...+------+--------+---+
+  |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |pad|
+  +------+----+------+---+--------+...+------+--------+---+
+                                  next L2 Word boundary ->|
+     Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
     ]]></artwork></figure></t>
 
@@ -227,23 +230,25 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
     received.</t>
 
 <t><figure title="SCHC Compound ACK message format with compressed bitmap" anchor="compound-ack-compressed-bitmap-1"><artwork><![CDATA[
-    |--SCHC ACK Header--| W = w1 |...|      W = wi           |
-    + ----------------- + ------ +...+ ------ + ------------ +
-    |RuleID|W=b'w1|C=b'0| Bitmap |...| W=b'wi |0 1 1 1 1 1 1 |
-    + -----+------+---- + ------ +...+ ------ + ------------ +
-           |M bits|1 bit|            | M bits |
-                          next L2 Word boundary ->|
-                   SCHC Compound ACK with uncompressed Bitmap
 
-                        | W = w1 |...|   W = wi   |
-    + ----------------- + ------ +...+ ------ + - +
-    |RuleID|W=b'w1|C=b'0| Bitmap |...| W=b'wi |0 1|
-    + -----+------+---- + ------ +...+ ------ + - +
-                          next L2 Word boundary ->|
-                   Transmitted SCHC Compound ACK
+  |--- SCHC ACK Header --|- W=w1 -|...|-------- W=wi -------|
+         |--T-|---M--|-1-|        |...|---M--|
+  +------+----+------+---+--------+...+------+--------------+
+  |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi |0 1 1 1 1 1 1 |
+  +------+----+------+---+--------+...+------+--------------+
+                         next L2 Word boundary ->|
+                 SCHC Compound ACK with uncompressed Bitmap
 
+  |--- SCHC ACK Header --|- W=w1 -|...|-- W=wi --|
+         |--T-|---M--|-1-|        |...|---M--|
+  +------+----+------+---+--------+...+------+---+
+  |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi |0 1|
+  +------+----+------+---+--------+...+------+---+
+                         next L2 Word boundary ->|
+                 Transmitted SCHC Compound ACK
 
-       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+   Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
 ]]></artwork></figure></t>
 
 <t><xref target="compound-ack-compressed-bitmap"/> shows a bitmap compression example of a SCHC Compound ACK,
@@ -251,34 +256,24 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
     received.</t>
 <t><figure title="SCHC Compound ACK message format with compressed bitmap" anchor="compound-ack-compressed-bitmap"><artwork><![CDATA[
 
-    |--SCHC ACK Header--| W = w1 |...
-    + ----------------- + ------ +...
-    |RuleID|W=b'w1|C=b'0| Bitmap |...
-    + ---- + ---- + --- + ------ +...
-           |M bits|1 bit|
 
-               ...|      W = wi           |
-               ...+ ------ + ------------ +
-               ...| W=b'wi |1 1 0 1 1 1 1 |
-               ...+ ------ + ------------ +
-                  | M bits |
-     next L2 Word boundary ->|
-                   SCHC Compound ACK with uncompressed Bitmap
+ |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
+        |--T-|---M--|-1-|      |...|---M--|
+ +------+----+------+---+------+...+------+--------------+
+ |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 1 0 1 1 1 1 |
+ +------+----+------+---+------+...+------+--------------+
+                    next L2 Word boundary ->|
+                 SCHC Compound ACK with uncompressed Bitmap
 
-                        | W = w1 |...
-    + ----------------- + ------ +...
-    |RuleID|W=b'w1|C=b'0| Bitmap |...
-    + ---- + ---- + --- + ------ +...
+ |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
+        |--T-|---M--|-1-|      |...|---M--|              |---M--|
+ +------+----+------+---+------+...+------+--------------+------+---+
+ |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 1 0 1 1 1 1 |00..00|pad|
+ +------+----+------+---+------+...+------+--------------+------+---+
+                    next L2 Word boundary ->|<------ L2 Word ------>|
+                  Transmitted SCHC Compound ACK
 
-               ...|     W = wi            | M bits |
-               ...+ ------ + ------------ + ------ + --- +
-               ...| W=b'wi |1 1 0 1 1 1 1 | 00..00 | pad |
-               ...+ ------ + ------------ + ------ + --- +
-     next L2 Word boundary ->|<-------- L2 Word -------->|
-
-                   Transmitted SCHC Compound ACK
-
-       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+      Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
 ]]></artwork></figure></t>
 
@@ -318,7 +313,7 @@ after it a SCHC ACK REQ with the W field corresponding to the last window.</t>
 
 <t><list style="symbols">
 <t>(...)</t>
-<t>the fragment sender MUST resend SCHC Fragment messages containing all the tiles of all the windows that are reported missing in the 
+<t>the fragment sender MUST send SCHC Fragment messages containing all the tiles of all the windows that are reported missing in the
 SCHC Compound ACK.</t>
 <t>if the last of these SCHC Fragment messages reported missing is not an All-1 SCHC Fragment, then the fragment sender MAY either, 
 send in addition a SCHC ACK REQ with the W field corresponding to the last window, continue the transmission of the remaining fragments to be 
@@ -389,12 +384,13 @@ Only 1 compound SCHC ACK is generated.</t>
 
  
 <t><figure title="SCHC Compound ACK message format example: Losses are found in windows 00 and 01" anchor="compound-ack-fmt-ex"><artwork><![CDATA[
-    
-	
- |-- SCHC ACK Header ---|- W=00 --|----- W=01 -----| M bits |
- + -------------------- + ------- + ---- + ------- + ------ + --- +
- | RuleID | W=00  | C=0 | 1111011 | W=01 | 1111101 | 00..00 | pad |
- + ------ + ------ + -- + ------- + ---- + ------- + ------ + --- +
+
+ |--- SCHC ACK Header --|- W=00 --|----- W=01 -----|
+        |--T-|---M--|-1-|         |---M--|         |---M--|
+ +------+----+------+---+---------+------+---------+------+-----+
+ |RuleID|DTag| W=00 |C=0| 1111011 | W=01 | 1111101 |00..00| pad |
+ +------+----+------+---+---------+------+---------+------+-----+
+                         next L2 Word boundary ->|<-- L2 Word ->|
 
 ]]></artwork></figure></t>
 
