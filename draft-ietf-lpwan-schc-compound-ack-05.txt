@@ -369,7 +369,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
    o  (...)
 
-   o  the fragment sender MUST send SCHC Fragment messages containing
+   o  the fragment sender MUST resend SCHC Fragment messages containing
       all the tiles of all the windows that are reported missing in the
       SCHC Compound ACK.
 
