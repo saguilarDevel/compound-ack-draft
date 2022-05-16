@@ -174,11 +174,11 @@ placed in the SCHC ACK Header.</t>
 
 <t><figure title="SCHC Success ACK message format, as defined in RFC8724" anchor="success-ack-1byte"><artwork><![CDATA[
 
-               |--- SCHC ACK Header ---|
-                        |-  T -|-M-| 1 |
-               +--------+------+---+---+~~~~~~~~~~~~~~~~~~
-               | RuleID | DTag | W |C=1| padding as needed
-               +--------+------+---+---+~~~~~~~~~~~~~~~~~~
+               |-- SCHC ACK Header --|
+                        |--T-|-M-| 1 |
+               +--------+----+---+---+~~~~~~~~~~~~~~~~~~
+               | RuleID |DTag| W |C=1| padding as needed
+               +--------+----+---+---+~~~~~~~~~~~~~~~~~~
 
 ]]></artwork></figure></t>
 
@@ -199,7 +199,7 @@ The M bits with 0 value signal the end of the SCHC Compound ACK.
          |--T-|---M--|-1-|        |...|---M--|        |---M--|
   +------+----+------+---+--------+...+------+--------+------+-----+
   |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |00..00| pad |
-  +------+----+------+---+--------+...+----- +--------+------+-----+
+  +------+----+------+---+--------+...+------+--------+------+-----+
                             next L2 Word boundary ->|<-- L2 Word ->|
      Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 		
