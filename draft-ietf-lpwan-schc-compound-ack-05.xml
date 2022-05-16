@@ -260,7 +260,7 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
  |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
         |--T-|---M--|-1-|      |...|---M--|
  +------+----+------+---+------+...+------+--------------+
- |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 1 0 1 1 1 1 |
+ |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 0 1 0 1 1 1 |
  +------+----+------+---+------+...+------+--------------+
                     next L2 Word boundary ->|
                  SCHC Compound ACK with uncompressed Bitmap
@@ -268,7 +268,7 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
  |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
         |--T-|---M--|-1-|      |...|---M--|              |---M--|
  +------+----+------+---+------+...+------+--------------+------+---+
- |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 1 0 1 1 1 1 |00..00|pad|
+ |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 0 1 0 1 1 1 |00..00|pad|
  +------+----+------+---+------+...+------+--------------+------+---+
                     next L2 Word boundary ->|<------ L2 Word ------>|
                   Transmitted SCHC Compound ACK
@@ -388,7 +388,7 @@ Only 1 compound SCHC ACK is generated.</t>
  |--- SCHC ACK Header --|- W=00 --|----- W=01 -----|
         |--T-|---M--|-1-|         |---M--|         |---M--|
  +------+----+------+---+---------+------+---------+------+-----+
- |RuleID|DTag| W=00 |C=0| 1111011 | W=01 | 1111101 |00..00| pad |
+ |RuleID|DTag| W=00 |C=0| 1111011 | W=01 | 1111101 |  00  | pad |
  +------+----+------+---+---------+------+---------+------+-----+
                          next L2 Word boundary ->|<-- L2 Word ->|
 
