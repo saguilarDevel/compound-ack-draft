@@ -3,7 +3,7 @@
 
 
 lpwan Working Group                                           JC. Zuniga
-Internet-Draft
+Internet-Draft                                                     Cisco
 Updates: RFC8724 (if approved)                                  C. Gomez
 Intended status: Standards Track                              S. Aguilar
 Expires: September 22, 2022         Universitat Politecnica de Catalunya
@@ -16,7 +16,7 @@ Expires: September 22, 2022         Universitat Politecnica de Catalunya
 
 
                            SCHC Compound ACK
-                 draft-ietf-lpwan-schc-compound-ack-04
+                 draft-ietf-lpwan-schc-compound-ack-05
 
 Abstract
 
@@ -79,18 +79,18 @@ Table of Contents
    2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  SCHC Compound ACK . . . . . . . . . . . . . . . . . . . . . .   3
      3.1.  SCHC Compound ACK Message Format  . . . . . . . . . . . .   4
-     3.2.  SCHC Compound ACK Behaviour . . . . . . . . . . . . . . .   5
-       3.2.1.  Sender Behaviour  . . . . . . . . . . . . . . . . . .   5
-       3.2.2.  Receiver Behaviour  . . . . . . . . . . . . . . . . .   6
-     3.3.  SCHC Compound ACK Examples  . . . . . . . . . . . . . . .   6
-     3.4.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . .   7
-       3.4.1.  SCHC YANG Data Model Extension  . . . . . . . . . . .   7
-       3.4.2.  SCHC YANG Tree Extension  . . . . . . . . . . . . . .  10
-   4.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  10
-   5.  Security considerations . . . . . . . . . . . . . . . . . . .  10
-   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  10
-   7.  Normative References  . . . . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
+     3.2.  SCHC Compound ACK Behaviour . . . . . . . . . . . . . . .   6
+       3.2.1.  Sender Behaviour  . . . . . . . . . . . . . . . . . .   7
+       3.2.2.  Receiver Behaviour  . . . . . . . . . . . . . . . . .   7
+     3.3.  SCHC Compound ACK Examples  . . . . . . . . . . . . . . .   8
+     3.4.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . .   9
+       3.4.1.  SCHC YANG Data Model Extension  . . . . . . . . . . .   9
+       3.4.2.  SCHC YANG Tree Extension  . . . . . . . . . . . . . .  11
+   4.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  11
+   5.  Security considerations . . . . . . . . . . . . . . . . . . .  12
+   6.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  12
+   7.  Normative References  . . . . . . . . . . . . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -158,10 +158,10 @@ Internet-Draft              SCHC Compound ACK                 March 2022
    corresponding bitmap.  Windows do not need to be contiguous.
    However, the window numbers and corresponding bitmaps included in the
    SCHC Compound ACK message MUST be ordered from the lowest-numbered to
-   the highest-numbered window.  Hence, if the the bitmap of window
-   number zero is present in the SCHC Compound ACK message, it MUST
-   always be the first one in order and its W number MUST be placed in-
-
+   the highest-numbered window.  Hence, if the bitmap of window number
+   zero is present in the SCHC Compound ACK message, it MUST always be
+   the first one in order and its W number MUST be placed in the SCHC
+   ACK Header.
 
 
 
@@ -170,53 +170,53 @@ Zuniga, et al.         Expires September 22, 2022               [Page 3]
 Internet-Draft              SCHC Compound ACK                 March 2022
 
 
-   between the Rule ID and the C bit.  This also avoids confusing any
-   '0s' padding bits following the first bitmap with W number zero.
-
 3.1.  SCHC Compound ACK Message Format
 
    Figure 1 shows the regular SCHC ACK format when all fragments have
    been correctly received (C=1), as defined in [RFC8724].
 
 
-                  |- SCHC ACK Header --|
-                  + -------+---+------ + ------------ +
-                  | RuleID | W | C=b'1 | b'0-pad(opt) |
-                  + ------ + - + ----- + ------------ +
+                  |--- SCHC ACK Header ---|
+                           |-  T -|-M-| 1 |
+                  +--------+------+---+---+~~~~~~~~~~~~~~~~~~
+                  | RuleID | DTag | W |C=1| padding as needed
+                  +--------+------+---+---+~~~~~~~~~~~~~~~~~~
 
 
      Figure 1: SCHC Success ACK message format, as defined in RFC8724
 
    In case SCHC Fragment losses are found in any of the windows of the
    SCHC Packet, the SCHC Compound ACK MAY be used.  The SCHC Compound
-   ACK message format is shown in Figure 2.
+   ACK message format is shown in Figure 2.  If more than M padding bits
+   are needed, the first M bits MUST be 0-padded.  The M bits with 0
+   value signal the end of the SCHC Compound ACK.  To avoid confusing
+   the M '0s' padding bits with Window number 0, if present in the SCHC
+   Compound ACK, Window number 0 MUST be placed as w1.  The RECOMMENDED
+   value for extra padding bits is 0.
 
 
-    |--SCHC ACK Header--| W = w1 |...|      W = wi      |
-    +-------------------+ ------ +...+ ------- + ------ +------------+
-    |RuleID|W=b'w1|C=b'0| Bitmap |...|  W=b'wi | Bitmap |b'0-pad(opt)|
-    +------+------+-----+ ------ +...+ ------- + ------ +------------+
-
-       Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+     |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
+            |--T-|---M--|-1-|        |...|---M--|        |---M--|
+     +------+----+------+---+--------+...+------+--------+------+-----+
+     |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |00..00| pad |
+     +------+----+------+---+--------+...+----- +--------+------+-----+
+                               next L2 Word boundary ->|<-- L2 Word ->|
+        Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
 
                 Figure 2: SCHC Compound ACK message format
 
-   The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for
-   intermediate windows/bitmaps (i.e., bitmaps that are not the last
-   one), and therefore intermediate bitmaps fields MUST be of size
-   WINDOW_SIZE.  Hence, the SCHC Compound ACK MAY use a Compressed
-   Bitmap format only for the last bitmap.  The optional usage of this
-   Compressed Bitmap for the last bitmap MUST be specified by the SCHC
-   technology-specific profile.
+   Figure 3 show the case when the required padding bits are less than M
+   bits.  In this case, any padding value MAY be added, as there are no
+   M bits to indicate any window value, nor bitmap, signaling the end of
+   the SCHC Compound ACK.  The RECOMMENDED padding value is 0.
 
-   If a SCHC sender gets a SCHC Compound ACK with invalid W's, such as
-   duplicate W values or W values not sent yet, it MUST discard the
-   whole SCHC Compound ACK message.
 
-   Each different SCHC LPWAN technology profile MUST specify how the
-   SCHC Compound ACK is different from the Receiver-Abort message as per
-   [RFC8724], e.g., the Receiver-Abort message is padded with 1s with an
+
+
+
+
+
 
 
 
@@ -226,8 +226,96 @@ Zuniga, et al.         Expires September 22, 2022               [Page 4]
 Internet-Draft              SCHC Compound ACK                 March 2022
 
 
-   extra byte appended at the end, while the SCHC Compound ACK is
-   0-padded.
+     |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
+            |--T-|---M--|-1-|        |...|---M--|        |---M--|
+     +------+----+------+---+--------+...+------+--------+---+
+     |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |pad|
+     +------+----+------+---+--------+...+------+--------+---+
+                                     next L2 Word boundary ->|
+        Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+
+    Figure 3: SCHC Compound ACK message format with less than M padding
+                                   bits
+
+   The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for
+   intermediate windows/bitmaps (i.e., bitmaps that are not the last
+   one), and therefore intermediate bitmaps fields MUST be of size
+   WINDOW_SIZE.  Hence, the SCHC Compound ACK MAY use a Compressed
+   Bitmap format only for the last bitmap.  The optional usage of this
+   Compressed Bitmap for the last bitmap MUST be specified by the SCHC
+   technology-specific profile.
+
+   Figure 5 shows a bitmap compression example of a SCHC Compound ACK,
+   where the bitmap of the last window (wi) indicates that the first
+   tile has not been correctly received.
+
+
+     |--- SCHC ACK Header --|- W=w1 -|...|-------- W=wi -------|
+            |--T-|---M--|-1-|        |...|---M--|
+     +------+----+------+---+--------+...+------+--------------+
+     |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi |0 1 1 1 1 1 1 |
+     +------+----+------+---+--------+...+------+--------------+
+                            next L2 Word boundary ->|
+                    SCHC Compound ACK with uncompressed Bitmap
+
+     |--- SCHC ACK Header --|- W=w1 -|...|-- W=wi --|
+            |--T-|---M--|-1-|        |...|---M--|
+     +------+----+------+---+--------+...+------+---+
+     |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi |0 1|
+     +------+----+------+---+--------+...+------+---+
+                            next L2 Word boundary ->|
+                    Transmitted SCHC Compound ACK
+
+      Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+
+     Figure 4: SCHC Compound ACK message format with compressed bitmap
+
+
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022               [Page 5]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
+   Figure 5 shows a bitmap compression example of a SCHC Compound ACK,
+   where the bitmap of the last window (wi) indicates that the second
+   and the fourth tile have not been correctly received.
+
+
+
+    |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
+           |--T-|---M--|-1-|      |...|---M--|
+    +------+----+------+---+------+...+------+--------------+
+    |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 0 1 0 1 1 1 |
+    +------+----+------+---+------+...+------+--------------+
+                       next L2 Word boundary ->|
+                    SCHC Compound ACK with uncompressed Bitmap
+
+    |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
+           |--T-|---M--|-1-|      |...|---M--|              |---M--|
+    +------+----+------+---+------+...+------+--------------+------+---+
+    |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 0 1 0 1 1 1 |00..00|pad|
+    +------+----+------+---+------+...+------+--------------+------+---+
+                       next L2 Word boundary ->|<------ L2 Word ------>|
+                     Transmitted SCHC Compound ACK
+
+         Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+
+     Figure 5: SCHC Compound ACK message format with compressed bitmap
+
+   If a SCHC sender gets a SCHC Compound ACK with invalid W's, such as
+   duplicate W values or W values not sent yet, it MUST discard the
+   whole SCHC Compound ACK message.
+
+   Note: because it has a C bit reset to 0, the SCHC Compound ACK is
+   distinguishable from the Receiver-Abort message [RFC8724], which has
+   a C bit set to 1.
 
 3.2.  SCHC Compound ACK Behaviour
 
@@ -242,6 +330,14 @@ Internet-Draft              SCHC Compound ACK                 March 2022
    Also, some flexibility is introduced with respect to [RFC8724], in
    that the receiver has the capability to respond to the All-0 with a
    SCHC Compound ACK or not, depending on certain parameters, like
+
+
+
+Zuniga, et al.         Expires September 22, 2022               [Page 6]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
    network conditions.  Note that even though the protocol allows for
    such flexibility, the actual decision criteria is not specified in
    this document.
@@ -267,21 +363,13 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
    o  (...)
 
-   o  the fragment sender MUST resend SCHC Fragment messages containing
+   o  the fragment sender MUST send SCHC Fragment messages containing
       all the tiles of all the windows that are reported missing in the
       SCHC Compound ACK.
 
    o  if the last of these SCHC Fragment messages reported missing is
       not an All-1 SCHC Fragment, then the fragment sender MAY either,
       send in addition a SCHC ACK REQ with the W field corresponding to
-
-
-
-Zuniga, et al.         Expires September 22, 2022               [Page 5]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
-
-
       the last window, continue the transmission of the remaining
       fragments to be transmitted, or repeat the All-1 fragment to
       confirm that all fragments have been correctly received.
@@ -297,6 +385,15 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
    NEW TEXT: On receiving an All-0 SCHC Fragment:
 
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022               [Page 7]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
    o  if the receiver knows of any windows with missing tiles for the
       packet being reassembled (and if network conditions are known to
       be conducive), it MAY return a SCHC Compound ACK for the missing
@@ -310,33 +407,10 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 3.3.  SCHC Compound ACK Examples
 
-   Figure 3 shows an example transmission of a SCHC Packet in ACK-on-
+   Figure 6 shows an example transmission of a SCHC Packet in ACK-on-
    Error mode using the SCHC Compound ACK.  In the example, the SCHC
    Packet is fragmented in 14 tiles, with N=3, WINDOW_SIZE=7, M=2 and
    two lost SCHC fragments.  Only 1 compound SCHC ACK is generated.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Zuniga, et al.         Expires September 22, 2022               [Page 6]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
-
 
            Sender                Receiver
              |-----W=0, FCN=6 ----->|
@@ -360,17 +434,31 @@ Internet-Draft              SCHC Compound ACK                 March 2022
              |<--- ACK, W=1, C=1 ---| C=1
            (End)
 
-           Figure 3: SCHC Compound ACK message sequence example
+           Figure 6: SCHC Compound ACK message sequence example
 
 
 
-    |-- SCHC ACK Header ---|- W=00 --|----- W=01 -----|
-    + -------------------- + ------- + ---- + ------- + ------------- +
-    | RuleID | W=00  | C=0 | 1111011 | W=01 | 1111101 | b'0-pad (opt) |
-    + ------ + ------ + -- + ------- + ---- + ------- + ------------- +
 
 
-   Figure 4: SCHC Compound ACK message format example: Losses are found
+
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022               [Page 8]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
+    |--- SCHC ACK Header --|- W=00 --|----- W=01 -----|
+           |--T-|---M--|-1-|         |---M--|         |---M--|
+    +------+----+------+---+---------+------+---------+------+-----+
+    |RuleID|DTag| W=00 |C=0| 1111011 | W=01 | 1111101 |  00  | pad |
+    +------+----+------+---+---------+------+---------+------+-----+
+                            next L2 Word boundary ->|<-- L2 Word ->|
+
+
+   Figure 7: SCHC Compound ACK message format example: Losses are found
                            in windows 00 and 01
 
 3.4.  SCHC Compound ACK YANG Data Model
@@ -386,14 +474,6 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 <CODE BEGINS> file "ietf-compound-ack@2021-12-10.yang"
 
 module ietf-schc-compound-ack {
-
-
-
-Zuniga, et al.         Expires September 22, 2022               [Page 7]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
-
-
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-schc-compound-ack";
   prefix schc-compound-ack;
@@ -418,6 +498,14 @@ Internet-Draft              SCHC Compound ACK                 March 2022
      Redistribution and use in source and binary forms, with or
      without modification, is permitted pursuant to, and subject to
      the license terms contained in, the Simplified BSD License set
+
+
+
+Zuniga, et al.         Expires September 22, 2022               [Page 9]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
      forth in Section 4.c of the IETF Trust's Legal Provisions
      Relating to IETF Documents
      (https://trustee.ietf.org/license-info).
@@ -442,14 +530,6 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     description
       "Initial version for RFC YYYY ";
     reference
-
-
-
-Zuniga, et al.         Expires September 22, 2022               [Page 8]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
-
-
       "RFC YYYY: SCHC Compound ACK";
   }
 
@@ -474,6 +554,14 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     type identityref {
       base bitmap-format-base-type;
     }
+
+
+
+Zuniga, et al.         Expires September 22, 2022              [Page 10]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
     description
       "type used in rules";
   }
@@ -499,19 +587,12 @@ Internet-Draft              SCHC Compound ACK                 March 2022
       "added to SCHC rules";
   }
 
-
-
-Zuniga, et al.         Expires September 22, 2022               [Page 9]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
-
-
 }
 
 <CODE ENDS>
 
 
-          Figure 5: SCHC YANG Data Model - Compound ACK extension
+          Figure 8: SCHC YANG Data Model - Compound ACK extension
 
 3.4.2.  SCHC YANG Tree Extension
 
@@ -521,7 +602,7 @@ Internet-Draft              SCHC Compound ACK                 March 2022
     +--rw bitmap-format?   schc-compound-ack:bitmap-format-type
 
 
-             Figure 6: SCHC YANG Tree - Compound ACK extension
+             Figure 9: SCHC YANG Tree - Compound ACK extension
 
 4.  SCHC Compound ACK Parameters
 
@@ -529,14 +610,18 @@ Internet-Draft              SCHC Compound ACK                 March 2022
    usage that need to be defined in the Profile, in addition to the ones
    listed in Annex D of [RFC8724].
 
+
+
+
+Zuniga, et al.         Expires September 22, 2022              [Page 11]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
    o  Usage or not of the SCHC Compound ACK message.
 
    o  Usage or not of the compressed bitmap format in the last window of
       the SCHC Compound ACK message.
-
-   o  Differentiation between SCHC Receiver-Abort and SCHC Compound ACK
-      message, e.g., Receiver-Abort message padded with 1s with an extra
-      byte appended at the end, while the SCHC Compound ACK is 0-padded.
 
 5.  Security considerations
 
@@ -554,13 +639,6 @@ Internet-Draft              SCHC Compound ACK                 March 2022
    Sergio Aguilar has been funded by the ERDF and the Spanish Government
    through project TEC2016-79988-P and project PID2019-106808RA-I00,
    AEI/FEDER, EU (funded by MCIN / AEI / 10.13039/501100011033).
-
-
-
-Zuniga, et al.         Expires September 22, 2022              [Page 10]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
-
 
    Sandra Cespedes has been funded in part by the ANID Chile Project
    FONDECYT Regular 1201893 and Basal Project FB0008.
@@ -584,6 +662,18 @@ Internet-Draft              SCHC Compound ACK                 March 2022
               Overview", RFC 8376, DOI 10.17487/RFC8376, May 2018,
               <https://www.rfc-editor.org/info/rfc8376>.
 
+
+
+
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022              [Page 12]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
+
+
    [RFC8724]  Minaburo, A., Toutain, L., Gomez, C., Barthel, D., and JC.
               Zuniga, "SCHC: Generic Framework for Static Context Header
               Compression and Fragmentation", RFC 8724,
@@ -593,10 +683,11 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 Authors' Addresses
 
    Juan Carlos Zuniga
+   Cisco
    Montreal  QC
    Canada
 
-   Email: j.c.zuniga@ieee.org
+   Email: juzuniga@cisco.com
 
 
    Carles Gomez
@@ -606,16 +697,6 @@ Authors' Addresses
    Spain
 
    Email: carlesgo@entel.upc.edu
-
-
-
-
-
-
-
-Zuniga, et al.         Expires September 22, 2022              [Page 11]
-
-Internet-Draft              SCHC Compound ACK                 March 2022
 
 
    Sergio Aguilar
@@ -635,6 +716,18 @@ Internet-Draft              SCHC Compound ACK                 March 2022
    France
 
    Email: Laurent.Toutain@imt-atlantique.fr
+
+
+
+
+
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022              [Page 13]
+
+Internet-Draft              SCHC Compound ACK                 March 2022
 
 
    Sandra Cespedes
@@ -669,4 +762,23 @@ Internet-Draft              SCHC Compound ACK                 March 2022
 
 
 
-Zuniga, et al.         Expires September 22, 2022              [Page 12]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Zuniga, et al.         Expires September 22, 2022              [Page 14]
