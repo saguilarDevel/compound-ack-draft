@@ -138,7 +138,7 @@ format so that it can contain several bitmaps, each bitmap being identified by i
 <t>provides feedback only for windows with fragment losses,</t>
 <t>has a variable size that depends on the number of windows with fragment losses being reported in the single Compound SCHC ACK,</t>
 <t>includes the window number (i.e., W) of each bitmap,</t> 
-<t>has the same SCHC ACK format defined in <xref target="RFC8724"/> when only one window with losses is reported,</t> 
+<!--has the same SCHC ACK format defined in <xref target="RFC8724"/> when only one window with losses is reported,--> 
 <t>might not cover all windows with fragment losses of a SCHC Packet,</t>
 <t>and is distinguishable from the SCHC Receiver-Abort.</t>
 </list></t>
@@ -158,6 +158,10 @@ in <xref target="RFC8724"/>.
 
 <t>The SCHC Compound ACK is a SCHC ACK message that can contain several bitmaps, each bitmap being identified by its 
 corresponding window number.
+</t>
+
+<t>The SCHC Compound ACK MAY be used in fragmentation modes that use windows and that allow
+reporting the bitmaps of multiple windows at the same time, and MUST NOT be used otherwise.
 </t>
 
 <t>The SCHC Compound ACK groups the window number (W) with its corresponding bitmap. Windows do not need to be 
@@ -184,12 +188,14 @@ placed in the SCHC ACK Header.</t>
 
 
 <t>In case SCHC Fragment losses are found in any of the windows of the SCHC Packet, the SCHC Compound ACK MAY be used.
-The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byte"/>.
-    If more than M padding bits are needed, the first M bits MUST be 0-padded.
-The M bits with 0 value signal the end of the SCHC Compound ACK.
-    To avoid confusing the M '0s' padding bits with Window number 0, if present in the SCHC Compound ACK, Window number 0 MUST be placed as w1.
-    The RECOMMENDED value for extra padding bits is 0.
-
+The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byte"/> and <xref target="compound-ack-less-M-padding"/>.
+    If M or more padding bits would be needed after the last bitmap in the message to fill the last L2 Word,
+	M bits at 0 MUST be appended after the last bitmap, and then padding is applied as needed (see <xref target="compound-ack-1byte"/>).
+<!-- The M bits with 0 value signal the end of the SCHC Compound ACK.
+    To avoid confusing the M '0s' padding bits with Window number 0, if present in the SCHC Compound ACK, Window number 0 MUST be placed as w1. -->
+Since window number 0, if present in the message, is placed as w1, the M bits set to zero can’t be confused with window number 0,
+and therefore they signal the end of the SCHC Compound ACK message.
+<!-- The RECOMMENDED value for the padding bits is 0. -->
 </t>
 
 
@@ -205,9 +211,10 @@ The M bits with 0 value signal the end of the SCHC Compound ACK.
 		
 ]]></artwork></figure></t>
 
-<t> <xref target="compound-ack-less-M-padding"/> show the case when the required padding bits are less than M bits.
-    In this case, any padding value MAY be added, as there are no M bits to indicate any window value, nor bitmap, signaling the end of the SCHC Compound ACK.
-    The RECOMMENDED padding value is 0.
+<t> <xref target="compound-ack-less-M-padding"/> shows the case when the required padding bits are strictly less than M bits.
+    In this case, the length of the message learnt from the underlying layer does not leave room for any extra window value, let alone any bitmap,
+	thereby signaling the end of the SCHC Compound ACK message.
+<!--    The RECOMMENDED padding value is 0. -->
 </t>
 
 <t><figure title="SCHC Compound ACK message format with less than M padding bits" anchor="compound-ack-less-M-padding"><artwork><![CDATA[
@@ -221,13 +228,18 @@ The M bits with 0 value signal the end of the SCHC Compound ACK.
 
     ]]></artwork></figure></t>
 
-<t>The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for intermediate windows/bitmaps (i.e., bitmaps that are not the last one), and 
-therefore intermediate bitmaps fields MUST be of size WINDOW_SIZE. Hence, the SCHC Compound ACK MAY use a Compressed Bitmap format only for the last bitmap.
+<t>The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for intermediate windows/bitmaps (i.e., bitmaps that are not the last one of the SCHC Compound ACK message), and 
+therefore intermediate bitmaps fields MUST be of size WINDOW_SIZE. Hence, the SCHC Compound ACK MAY use a Compressed Bitmap format only for the last bitmap in the message.
 The optional usage of this Compressed Bitmap for the last bitmap MUST be specified by the SCHC technology-specific profile.</t>
 
-<t><xref target="compound-ack-compressed-bitmap"/> shows a bitmap compression example of a SCHC Compound ACK,
+<t> The case where the last bitmap is effectively compressed corresponds to <xref target="compound-ack-less-M-padding"/>,
+    with the last bitmap ending, by construction, on an L2 Word boundary, therefore resulting in no padding at all.</t>
+
+<t><xref target="compound-ack-compressed-bitmap-1"/> illustrates a bitmap compression example of a SCHC Compound ACK,
     where the bitmap of the last window (wi) indicates that the first tile has not been correctly
-    received.</t>
+    received.
+    Because the compression algorithm resulted in effective compression, no padding is needed.
+    </t>
 
 <t><figure title="SCHC Compound ACK message format with compressed bitmap" anchor="compound-ack-compressed-bitmap-1"><artwork><![CDATA[
 
@@ -251,9 +263,12 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
 
 ]]></artwork></figure></t>
 
-<t><xref target="compound-ack-compressed-bitmap"/> shows a bitmap compression example of a SCHC Compound ACK,
+<t><xref target="compound-ack-compressed-bitmap"/> illustrates another bitmap compression example of a SCHC Compound ACK,
     where the bitmap of the last window (wi) indicates that the second and the fourth tile have not been correctly
-    received.</t>
+    received.
+    In this example, the compression algorithm does not result in effective compression of the last bitmap.
+    Besides, because more than M bits of padding would be needed to fill the last L2 Word, M bits at 0 are appended to the message before padding is applied.
+    </t>
 <t><figure title="SCHC Compound ACK message format with compressed bitmap" anchor="compound-ack-compressed-bitmap"><artwork><![CDATA[
 
 
