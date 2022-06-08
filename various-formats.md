@@ -96,4 +96,27 @@ Example of bitmap compression in the last bitmap with N = 7.
 
                  Figure D: SCHC Compound ACK message format
 ```
+```xml
+<t><figure title="SCHC Compound ACK message format with compressed bitmap" anchor="compound-ack-compressed-bitmap"><artwork><![CDATA[
 
+
+ |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
+        |--T-|---M--|-1-|      |...|---M--|
+ +------+----+------+---+------+...+------+--------------+
+ |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 0 1 0 0 0 0 |
+ +------+----+------+---+------+...+------+--------------+
+                    next L2 Word boundary ->|
+                 SCHC Compound ACK with uncompressed Bitmap
+
+ |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
+        |--T-|---M--|-1-|      |...|---M--|              |---M--|
+ +------+----+------+---+------+...+------+--------------+------+---+
+ |RuleID|DTag| W=w1 |C=0|Bitmap|...| W=wi |1 0 1 0 0 0 0 |00..00|pad|
+ +------+----+------+---+------+...+------+--------------+------+---+
+                    next L2 Word boundary ->|<------ L2 Word ------>|
+                  Transmitted SCHC Compound ACK
+
+      Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+]]></artwork></figure></t>
+```
