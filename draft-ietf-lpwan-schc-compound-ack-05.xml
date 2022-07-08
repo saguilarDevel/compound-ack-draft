@@ -313,7 +313,7 @@ a SCHC Compound ACK or not, depending on certain parameters, like network condit
 actual decision criteria is not specified in this document.</t>
 
 <t>The following sections describe the differences between the baseline SCHC specification and the present SCHC protocol extension specification.
-New text is between ** NEW TEXT **. Old text is -- OLD TEXT --.
+New text is between ** NEW TEXT **. Old text is -- OLD TEXT --. New text replaces old text.
 
 </t>
 
@@ -331,7 +331,7 @@ Regarding the penultimate tile, a Profile <bcp14>MUST</bcp14> pick one of the fo
             <li pn="section-8.4.3-4.2">the penultimate tile size <bcp14>MUST</bcp14> be either the regular tile size or the regular tile size minus one L2 Word.</li>
           </ul>
           <t pn="section-8.4.3-5">A SCHC Fragment message carries one or several contiguous tiles, which may span multiple windows.
-            A SCHC **Compound** ACK reports on the reception of **several windows of tiles, each one identified by its window number.**--exactly one window of tiles.--
+            A SCHC **Compound** ACK reports on the reception of --exactly-- one window of tiles ** or several windows of tiles, each one identified by its window number.**.
           </t>
           <t pn="section-8.4.3-6">See <xref target="Fig-TilesACKonError" format="default" sectionFormat="of" derivedContent="Figure 23"/> for an example.</t>
           <figure anchor="Fig-TilesACKonError" align="left" suppress-title="false" pn="figure-23">
