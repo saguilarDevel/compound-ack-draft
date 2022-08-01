@@ -99,10 +99,10 @@
     <abstract>
 
 
-<t>The present document describes an extension to the SCHC (Static Context Header Compression and fragmentation) protocol <xref target="RFC8724"/>. It defines a SCHC Compound ACK message
+<t>The present document describes an extension to the SCHC (Static Context Header Compression and fragmentation) protocol RFC8724. It defines a SCHC Compound ACK message
 format and procedure, which are intended to reduce the number of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode, by accumulating bitmaps of several windows in a single SCHC message
 (i.e., the SCHC Compound ACK). </t>
-<t>Both message format and procedure are generic, so they can be used, for instance, by any of the four LWPAN technologies defined in <xref target="RFC8376"/>, being Sigfox, LoRaWAN, NB-IoT and IEEE 802.15.4w.
+<t>Both message format and procedure are generic, so they can be used, for instance, by any of the four LWPAN technologies defined in RFC8376, being Sigfox, LoRaWAN, NB-IoT and IEEE 802.15.4w.
 
 
 </t>
@@ -148,7 +148,11 @@ format so that it can contain several bitmaps, each bitmap being identified by i
 
 
 <section anchor="terminology" title="Terminology">
-
+<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all
+   capitals, as shown here.</t>
 <t>It is assumed that the reader is familiar with the terms and mechanisms defined in <xref target="RFC8376"/> and
 in <xref target="RFC8724"/>.
 </t>
@@ -848,7 +852,9 @@ Annex D of <xref target="RFC8724"/>.</t>
 <t>The current document specifies a message format extension for SCHC. Hence, the same Security Considerations defined in <xref target="RFC8724"/> apply.</t>
 
 </section>
-
+<section anchor="ianaconsiderations" title="IANA Considerations">
+    <t>This document has no IANA actions.</t>
+</section>
 
 <section anchor="acknowledgements" title="Acknowledgements">
 
@@ -873,7 +879,9 @@ very useful comments, reviews and implementation design considerations.</t>
 
    <references title='Normative References'>
 
-<?rfc include='reference.RFC.8376'?>
+
+<?rfc include='reference.RFC.2119'?>
+<?rfc include='reference.RFC.8174'?>
 
 
 <reference anchor="I-D.ietf-lpwan-schc-yang-data-model">
@@ -964,9 +972,10 @@ very useful comments, reviews and implementation design considerations.</t>
 -->
     </references>
 
-<!--	
+
 	<references title='Informative References'>
-	
+        <?rfc include='reference.RFC.8376'?>
+	<!--
 <reference anchor="sigfox-spec" target="https://build.sigfox.com/sigfox-device-radio-specifications">
   <front>
     <title>Sigfox Radio Specifications</title>
@@ -986,10 +995,10 @@ very useful comments, reviews and implementation design considerations.</t>
     <date />
   </front>
 </reference>
-
+-->
 
     </references>
--->
+
 
 
 <!--
