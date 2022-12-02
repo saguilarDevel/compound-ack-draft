@@ -15,7 +15,7 @@
 <?rfc compact="yes"?>
 <?rfc toc="yes"?>
 
-<rfc ipr="trust200902" submissionType="IETF" consensus="true" docName="draft-ietf-lpwan-schc-compound-ack-07" category="std" updates="8724">
+<rfc ipr="trust200902" submissionType="IETF" consensus="true" docName="draft-ietf-lpwan-schc-compound-ack-08" category="std" updates="8724">
 
   <front>
    <title abbrev="SCHC Compound ACK">
@@ -94,7 +94,7 @@
       </address>
    </author>
 
-    <date year="2022" month="October" day="21"/>
+    <date year="2022" month="December" day="02"/>
 
 
     <workgroup>lpwan Working Group</workgroup>
@@ -712,7 +712,7 @@ a new leaf in the Ack-on-Error fragmentation mode to describe both the option to
 
 <t><figure title="SCHC YANG Data Model - Compound ACK extension" anchor="schc-data-model"><artwork><![CDATA[
 
-<CODE BEGINS> file "ietf-compound-ack@2021-12-10.yang"
+<CODE BEGINS> file "ietf-lpwan-schc-compound-ack@2021-12-10.yang"
    
 module ietf-schc-compound-ack {
   yang-version 1.1;
