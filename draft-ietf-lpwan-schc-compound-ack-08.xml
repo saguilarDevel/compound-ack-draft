@@ -714,7 +714,7 @@ a new leaf in the Ack-on-Error fragmentation mode to describe both the option to
 
 <CODE BEGINS> file "ietf-lpwan-schc-compound-ack@2022-12-02.yang"
    
-module ietf-schc-compound-ack {
+module ietf-lpwan-schc-compound-ack {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:ietf-lpwan-schc-compound-ack";
   prefix schc-compound-ack;
