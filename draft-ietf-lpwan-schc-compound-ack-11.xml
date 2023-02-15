@@ -136,16 +136,7 @@ is intended to reduce the number of response transmissions (i.e., SCHC ACKs) in 
 format so that it can contain several bitmaps, each bitmap being identified by its corresponding window number.
 </t>
 
-<t>The SCHC Compound ACK:</t>
 
-<t><list style="symbols">
-<t>provides feedback only for windows with fragment losses,</t>
-<t>has a variable size that depends on the number of windows with fragment losses being reported in the single Compound SCHC ACK,</t>
-<t>includes the window number (i.e., W) of each bitmap,</t>
-<!--has the same SCHC ACK format defined in <xref target="RFC8724"/> when only one window with losses is reported,-->
-<t>might not cover all windows with fragment losses of a SCHC Packet,</t>
-<t>and is distinguishable from the SCHC Receiver-Abort.</t>
-</list></t>
 
 </section>
 
@@ -164,7 +155,7 @@ in <xref target="RFC8724"/>.
 
 <section anchor="schc-compound-ack" title="SCHC Compound ACK">
 
-<t>The SCHC Compound ACK is a SCHC ACK message that can contain several bitmaps, each bitmap being identified by its
+<t>The SCHC Compound ACK is a failure SCHC ACK message that can contain several bitmaps, each bitmap being identified by its
 corresponding window number.
 </t>
 
@@ -172,17 +163,22 @@ corresponding window number.
 reporting the bitmaps of multiple windows at the same time, and MUST NOT be used otherwise.
 </t>
 
-<t>The SCHC Compound ACK groups the window number (W) with its corresponding bitmap. Windows do not need to be
-contiguous. However, the window numbers and corresponding bitmaps included in the SCHC Compound ACK message
-MUST be ordered from the lowest-numbered to the highest-numbered window. Hence, if the bitmap of window number zero
-is present in the SCHC Compound ACK message, it MUST always be the first one in order and its W number MUST be
-placed in the SCHC ACK Header.</t>
+<t>The SCHC Compound ACK:</t>
+
+<t><list style="symbols">
+<t>provides feedback only for windows with fragment losses,</t>
+<t>has a variable size that depends on the number of windows with fragment losses being reported in the single Compound SCHC ACK,</t>
+<t>includes the window number (i.e., W) of each bitmap,</t>
+<!--has the same SCHC ACK format defined in <xref target="RFC8724"/> when only one window with losses is reported,-->
+<t>might not cover all windows with fragment losses of a SCHC Packet,</t>
+<t>and is distinguishable from the SCHC Receiver-Abort.</t>
+</list></t>
 
 
 
 <section anchor="schc-ack-format-1B" title="SCHC Compound ACK Message Format">
 
-<t><xref target="success-ack-1byte"/> shows the regular SCHC ACK format when all fragments have been correctly received (C=1), as defined in <xref target="RFC8724"/>. </t>
+<t><xref target="success-ack-1byte"/> shows the success SCHC ACK format, i.e., when all fragments have been correctly received (C=1), as defined in <xref target="RFC8724"/>. </t>
 
 <t><figure title="SCHC Success ACK message format, as defined in RFC8724" anchor="success-ack-1byte"><artwork><![CDATA[
 
@@ -197,10 +193,13 @@ placed in the SCHC ACK Header.</t>
 
 <t>In case SCHC Fragment losses are found in any of the windows of the SCHC Packet, the SCHC Compound ACK MAY be used.
 The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byte"/> and <xref target="compound-ack-less-M-padding"/>.
-    If M or more padding bits would be needed after the last bitmap in the message to fill the last L2 Word,
-	M bits at 0 MUST be appended after the last bitmap, and then padding is applied as needed (see <xref target="compound-ack-1byte"/>).
+The SCHC Compound ACK groups the window number (W) with its corresponding bitmap.
+Window numbers do not need to be contiguous. However, the window numbers and its corresponding bitmaps included in the SCHC Compound ACK message MUST be ordered from the lowest-numbered to the highest-numbered window.
+Hence, if the bitmap of window number zero is present in the SCHC Compound ACK message, it MUST always be the first one in order and its W number MUST be placed in the SCHC ACK Header.</t>
+
+<t>If M or more padding bits would be needed after the last bitmap in the message to fill the last L2 Word, M bits at 0 MUST be appended after the last bitmap, and then padding is applied as needed (see <xref target="compound-ack-1byte"/>).
 <!-- The M bits with 0 value signal the end of the SCHC Compound ACK.
-    To avoid confusing the M '0s' padding bits with Window number 0, if present in the SCHC Compound ACK, Window number 0 MUST be placed as w1. -->
+To avoid confusing the M '0s' padding bits with Window number 0, if present in the SCHC Compound ACK, Window number 0 MUST be placed as w1. -->
 Since window number 0, if present in the message, is placed as w1, the M bits set to zero can’t be confused with window number 0,
 and therefore they signal the end of the SCHC Compound ACK message.
 <!-- The RECOMMENDED value for the padding bits is 0. -->
@@ -215,6 +214,7 @@ and therefore they signal the end of the SCHC Compound ACK message.
   |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |00..00| pad |
   +------+----+------+---+--------+...+------+--------+------+~~~~~+
                             next L2 Word boundary ->|<-- L2 Word ->|
+
      Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 		
 ]]></artwork></figure></t>
@@ -237,7 +237,8 @@ and therefore they signal the end of the SCHC Compound ACK message.
     ]]></artwork></figure></t>
 
 <t>The SCHC Compound ACK MUST NOT use the Compressed Bitmap format for intermediate windows/bitmaps (i.e., bitmaps that are not the last one of the SCHC Compound ACK message), and
-therefore intermediate bitmaps fields MUST be of size WINDOW_SIZE. Hence, the SCHC Compound ACK MAY use a Compressed Bitmap format only for the last bitmap in the message.
+therefore intermediate bitmaps fields MUST be of size WINDOW_SIZE.
+    Hence, the SCHC Compound ACK MAY use a Compressed Bitmap format only for the last bitmap in the message.
 The optional usage of this Compressed Bitmap for the last bitmap MUST be specified by the SCHC technology-specific profile.</t>
 
 <t> The case where the last bitmap is effectively compressed corresponds to <xref target="compound-ack-less-M-padding"/>,
@@ -257,6 +258,7 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
   |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi |0 1 1 1 1 1 1 |
   +------+----+------+---+--------+...+------+--------------+
                          next L2 Word boundary ->|
+
                  SCHC Compound ACK with uncompressed Bitmap
 
   |--- SCHC ACK Header --|- W=w1 -|...|-- W=wi --|
@@ -265,7 +267,8 @@ The optional usage of this Compressed Bitmap for the last bitmap MUST be specifi
   |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi |0 1|
   +------+----+------+---+--------+...+------+---+
                          next L2 Word boundary ->|
-                 Transmitted SCHC Compound ACK
+
+        Transmitted SCHC Compound ACK with compressed Bitmap
 
    Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
 
@@ -852,8 +855,9 @@ augment /schc:schc/schc:rule/schc:nature/schc:fragmentation/
 
 <section anchor="schc-compound-ack-parameters" title="SCHC Compound ACK Parameters">
 
-<t>This section lists the parameters related to the SCHC Compound ACK usage that need to be defined in the Profile, in addition to the ones listed in
-Annex D of <xref target="RFC8724"/>.</t>
+<t>This section lists the parameters related to the SCHC Compound ACK usage that need to be defined in the Profile.
+    This list MUST be appended to the list of SCHC parameters under "Decision to use SCHC fragmentation mechanism or not. If yes, the document must describe:" in Annex D of <xref target="RFC8724"/>.
+</t>
 
 <t><list style="symbols">
 <t>Usage or not of the SCHC Compound ACK message.</t>
