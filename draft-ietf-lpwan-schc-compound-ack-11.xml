@@ -319,10 +319,13 @@ window number.</t>
 a SCHC Compound ACK or not, depending on certain parameters, like network conditions. Note that even though the protocol allows for such flexibility, the
 actual decision criteria is not specified in this document.</t>
 
-<t>The following sections describe the differences between the baseline SCHC specification and the present SCHC protocol extension specification.
-New text is between ** NEW TEXT **. Old text is -- OLD TEXT --. New text replaces old text.
 
-</t>
+<t>The following <xref target="ACK-on-Error-subsection"/> (and its subsections) replaces the sections 8.4.2 (and its subsections) of RFC 8724.
+For the convenience of the reader, the added text to the original RFC 8724 is highlighted with *** NEW TEXT *** and the deleted text from RFC 8724 is delimited by -- OLD TEXT --.</t>
+<!--<t>The following sections describe the differences between the baseline SCHC specification and the present SCHC protocol extension specification.-->
+<!--New text is between ** NEW TEXT **. Old text is &#45;&#45; OLD TEXT &#45;&#45;. New text replaces old text.-->
+
+<!--</t>-->
 
            <section anchor="ACK-on-Error-subsection" numbered="true" toc="include" removeInRFC="false" pn="section-8.4.3">
           <name slugifiedName="name-ack-on-error-mode">ACK-on-Error Mode</name>
