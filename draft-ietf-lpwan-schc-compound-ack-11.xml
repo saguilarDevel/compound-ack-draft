@@ -320,8 +320,9 @@ a SCHC Compound ACK or not, depending on certain parameters, like network condit
 actual decision criteria is not specified in this document.</t>
 
 
-<t>The following <xref target="ACK-on-Error-subsection"/> (and its subsections) replaces the sections 8.4.2 (and its subsections) of RFC 8724.
-For the convenience of the reader, the added text to the original RFC 8724 is highlighted with *** NEW TEXT *** and the deleted text from RFC 8724 is delimited by -- OLD TEXT --.</t>
+<t>The following <xref target="ACK-on-Error-subsection"/> (and its subsections) replaces the complete sections 8.4.2 (and its subsections) of RFC 8724.
+<!--For the convenience of the reader, the added text to the original RFC 8724 is highlighted with *** NEW TEXT *** and the deleted text from RFC 8724 is delimited by &#45;&#45; OLD TEXT &#45;&#45;.-->
+</t>
 <!--<t>The following sections describe the differences between the baseline SCHC specification and the present SCHC protocol extension specification.-->
 <!--New text is between ** NEW TEXT **. Old text is &#45;&#45; OLD TEXT &#45;&#45;. New text replaces old text.-->
 
@@ -341,7 +342,7 @@ Regarding the penultimate tile, a Profile <bcp14>MUST</bcp14> pick one of the fo
             <li pn="section-8.4.3-4.2">the penultimate tile size <bcp14>MUST</bcp14> be either the regular tile size or the regular tile size minus one L2 Word.</li>
           </ul>
           <t pn="section-8.4.3-5">A SCHC Fragment message carries one or several contiguous tiles, which may span multiple windows.
-            A SCHC **Compound** ACK reports on the reception of --exactly-- one window of tiles ** or several windows of tiles, each one identified by its window number**.
+            A SCHC Compound ACK reports on the reception of one window of tiles or several windows of tiles, each one identified by its window number.
           </t>
           <t pn="section-8.4.3-6">See <xref target="Fig-TilesACKonError" format="default" sectionFormat="of" derivedContent="Figure 23"/> for an example.</t>
           <figure anchor="Fig-TilesACKonError" align="left" suppress-title="false" pn="figure-23">
@@ -358,8 +359,8 @@ Window# |-------- 0 --------|-------- 1 --------|- 2  ... 27 -|- 28-|
 SCHC Fragment msg   |-----------|</artwork>
           </figure>
           <t pn="section-8.4.3-8">The W field is wide enough that it unambiguously represents an absolute window number.
-The fragment receiver sends SCHC **Compound** ACKs to the fragment sender about windows for which tiles are missing.
-No SCHC **Compound** ACK is sent by the fragment receiver for windows that it knows have been fully received.</t>
+The fragment receiver sends SCHC Compound ACKs to the fragment sender about windows for which tiles are missing.
+No SCHC Compound ACK is sent by the fragment receiver for windows that it knows have been fully received.</t>
           <t pn="section-8.4.3-9">The fragment sender retransmits SCHC Fragments for tiles that are reported missing.
 It can advance to next windows even before it has ascertained that all tiles belonging to previous windows have been correctly received,
 and it can still later retransmit SCHC Fragments with tiles belonging to previous windows.
@@ -386,7 +387,7 @@ and this information has been conveyed back to the sender, or</li>
             <li pn="section-8.4.3-14.9">the expiration time of the Inactivity Timer,</li>
             <li pn="section-8.4.3-14.10">if the last tile is carried in a Regular SCHC Fragment or an All-1 SCHC Fragment Section 8.4.3.1), and</li>
             <li pn="section-8.4.3-14.11">if the penultimate tile <bcp14>MAY</bcp14> be one L2 Word smaller than the regular tile size. In this case, the regular tile size <bcp14>MUST</bcp14> be at least twice the L2 Word size.</li>
-              <li pn="section-8.4.3-14.12">**if the SCHC Compound ACK is used.**</li>
+              <li pn="section-8.4.3-14.12">if the SCHC Compound ACK is used.</li>
           </ul>
           <t pn="section-8.4.3-15">For each active pair of RuleID and DTag values, the sender <bcp14>MUST</bcp14> maintain:</t>
           <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3-16">
@@ -425,12 +426,12 @@ The FCN field <bcp14>MUST</bcp14> contain the tile index of the first tile sent 
             <t pn="section-8.4.3.1-10">The fragment sender <bcp14>MUST</bcp14> send SCHC Fragments such that, all together, they contain all the tiles of the fragmented SCHC Packet.</t>
             <t pn="section-8.4.3.1-11">The fragment sender <bcp14>MUST</bcp14> send at least one All-1 SCHC Fragment.</t>
             <t pn="section-8.4.3.1-12">In doing the two items above, the sender <bcp14>MUST</bcp14> ascertain that the receiver will not receive the last tile through both a Regular SCHC Fragment and an All-1 SCHC Fragment.</t>
-            <t pn="section-8.4.3.1-13">The fragment sender <bcp14>MUST</bcp14> listen for SCHC **Compound** ACK messages after having sent:</t>
+            <t pn="section-8.4.3.1-13">The fragment sender <bcp14>MUST</bcp14> listen for SCHC Compound ACK messages after having sent:</t>
             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-14">
               <li pn="section-8.4.3.1-14.1">an All-1 SCHC Fragment, or</li>
               <li pn="section-8.4.3.1-14.2">a SCHC ACK REQ.</li>
             </ul>
-            <t pn="section-8.4.3.1-15">A Profile <bcp14>MAY</bcp14> specify other times at which the fragment sender <bcp14>MUST</bcp14> listen for SCHC **Compound** ACK messages.
+            <t pn="section-8.4.3.1-15">A Profile <bcp14>MAY</bcp14> specify other times at which the fragment sender <bcp14>MUST</bcp14> listen for SCHC Compound ACK messages.
 For example, this could be after sending a complete window of tiles.</t>
             <t pn="section-8.4.3.1-16">Each time a fragment sender sends an All-1 SCHC Fragment or a SCHC ACK REQ:</t>
             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-17">
@@ -448,10 +449,10 @@ it <bcp14>MAY</bcp14> exit with an error condition.</li>
             </ul>
             <t pn="section-8.4.3.1-20">All message receptions being discussed in the rest of this section are to be understood as
 "matching the RuleID and DTag pair being processed", even if not spelled out, for brevity.</t>
-            <t pn="section-8.4.3.1-21">On receiving a SCHC **Compound** ACK:</t>
+            <t pn="section-8.4.3.1-21">On receiving a SCHC Compound ACK:</t>
             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22">
               <li pn="section-8.4.3.1-22.1">
-                <t pn="section-8.4.3.1-22.1.1">if **one of** the W field in the SCHC **Compound** ACK corresponds to the last window of the SCHC Packet:</t>
+                <t pn="section-8.4.3.1-22.1.1">if one of the W field in the SCHC Compound ACK corresponds to the last window of the SCHC Packet:</t>
                 <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.1.2">
                   <li pn="section-8.4.3.1-22.1.2.1">if the C bit is set, the sender <bcp14>MAY</bcp14> exit successfully.</li>
                   <li pn="section-8.4.3.1-22.1.2.2">
@@ -461,7 +462,7 @@ it <bcp14>MAY</bcp14> exit with an error condition.</li>
                         <t pn="section-8.4.3.1-22.1.2.2.2.1.1">if the Profile mandates that the last tile be sent in an All-1 SCHC Fragment:</t>
                         <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.1.2.2.2.1.2">
                           <li pn="section-8.4.3.1-22.1.2.2.2.1.2.1">
-                            <t pn="section-8.4.3.1-22.1.2.2.2.1.2.1.1">if the SCHC **Compound** ACK shows no missing tile at the receiver, the sender:</t>
+                            <t pn="section-8.4.3.1-22.1.2.2.2.1.2.1.1">if the SCHC Compound ACK shows no missing tile at the receiver, the sender:</t>
                             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.1.2.2.2.1.2.1.2">
                               <li pn="section-8.4.3.1-22.1.2.2.2.1.2.1.2.1">
                                 <bcp14>MUST</bcp14> send a SCHC Sender-Abort, and</li>
@@ -472,8 +473,8 @@ it <bcp14>MAY</bcp14> exit with an error condition.</li>
                           <li pn="section-8.4.3.1-22.1.2.2.2.1.2.2">
                             <t pn="section-8.4.3.1-22.1.2.2.2.1.2.2.1">otherwise:</t>
                             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.1.2.2.2.1.2.2.2">
-                              <li pn="section-8.4.3.1-22.1.2.2.2.1.2.2.2.1">the fragment sender <bcp14>MUST</bcp14> send SCHC Fragment messages containing all the tiles **of all the windows** that are reported missing in the SCHC **Compound** ACK.</li>
-                              <li pn="section-8.4.3.1-22.1.2.2.2.1.2.2.2.2">if the last of these SCHC Fragment messages is not an All-1 SCHC Fragment, then the fragment sender --<bcp14>MUST</bcp14> in addition send after it a SCHC ACK REQ with the W field corresponding to the last window.-- **MAY either send in addition a SCHC ACK REQ with the W field corresponding to the last window, or repeat the All-1 SCHC Fragment to ask the receiver confirmation that all tiles have been correctly received.**
+                              <li pn="section-8.4.3.1-22.1.2.2.2.1.2.2.2.1">the fragment sender <bcp14>MUST</bcp14> send SCHC Fragment messages containing all the tiles of all the windows that are reported missing in the SCHC Compound ACK.</li>
+                              <li pn="section-8.4.3.1-22.1.2.2.2.1.2.2.2.2">if the last of these SCHC Fragment messages is not an All-1 SCHC Fragment, then the fragment sender MAY either send in addition a SCHC ACK REQ with the W field corresponding to the last window, or repeat the All-1 SCHC Fragment to ask the receiver confirmation that all tiles have been correctly received.
 </li>
                               <li pn="section-8.4.3.1-22.1.2.2.2.1.2.2.2.3">in doing the two items above, the sender <bcp14>MUST</bcp14> ascertain that the receiver will not receive the last tile through both a Regular SCHC Fragment and an All-1 SCHC Fragment.</li>
                             </ul>
@@ -483,12 +484,12 @@ it <bcp14>MAY</bcp14> exit with an error condition.</li>
                       <li pn="section-8.4.3.1-22.1.2.2.2.2">
                         <t pn="section-8.4.3.1-22.1.2.2.2.2.1">otherwise:</t>
                         <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.1.2.2.2.2.2">
-                          <li pn="section-8.4.3.1-22.1.2.2.2.2.2.1">if the SCHC **Compound** ACK shows no missing tile at the receiver, the sender
+                          <li pn="section-8.4.3.1-22.1.2.2.2.2.2.1">if the SCHC Compound ACK shows no missing tile at the receiver, the sender
 <bcp14>MUST</bcp14> send the All-1 SCHC Fragment</li>
                           <li pn="section-8.4.3.1-22.1.2.2.2.2.2.2">
                             <t pn="section-8.4.3.1-22.1.2.2.2.2.2.2.1">otherwise:</t>
                             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.1.2.2.2.2.2.2.2">
-                              <li pn="section-8.4.3.1-22.1.2.2.2.2.2.2.2.1">the fragment sender <bcp14>MUST</bcp14> send SCHC Fragment messages containing all the tiles that are reported missing in the SCHC **Compound** ACK.</li>
+                              <li pn="section-8.4.3.1-22.1.2.2.2.2.2.2.2.1">the fragment sender <bcp14>MUST</bcp14> send SCHC Fragment messages containing all the tiles that are reported missing in the SCHC Compound ACK.</li>
                               <li pn="section-8.4.3.1-22.1.2.2.2.2.2.2.2.2">the fragment sender <bcp14>MUST</bcp14> then send
 either the All-1 SCHC Fragment or
 a SCHC ACK REQ with the W field corresponding to the last window.</li>
@@ -504,7 +505,7 @@ a SCHC ACK REQ with the W field corresponding to the last window.</li>
                 <t pn="section-8.4.3.1-22.2.1">otherwise, the fragment sender:</t>
                 <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.1-22.2.2">
                   <li pn="section-8.4.3.1-22.2.2.1">
-                    <bcp14>MUST</bcp14> send SCHC Fragment messages containing the tiles that are reported missing in the SCHC **Compound** ACK.</li>
+                    <bcp14>MUST</bcp14> send SCHC Fragment messages containing the tiles that are reported missing in the SCHC Compound ACK.</li>
                   <li pn="section-8.4.3.1-22.2.2.2">then, it <bcp14>MAY</bcp14> send a SCHC ACK REQ with the W field corresponding to the last window.</li>
                 </ul>
               </li>
@@ -554,31 +555,31 @@ This is possible because:</t>
                 </ul>
               </li>
             </ul>
-            <t pn="section-8.4.3.2-7">**On receiving a SCHC All-0 SCHC Fragment:</t>
+            <t pn="section-8.4.3.2-7">On receiving a SCHC All-0 SCHC Fragment:</t>
               <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.2-8">
-                  <li pn="section-8.4.3.2-8.1">if the receiver knows of any windows with missing tiles for the packet being reassembled (and if network conditions are known to be conducive), it MAY return a SCHC Compound ACK for the missing tiles, starting from the lowest-numbered window.**
+                  <li pn="section-8.4.3.2-8.1">if the receiver knows of any windows with missing tiles for the packet being reassembled (and if network conditions are known to be conducive), it MAY return a SCHC Compound ACK for the missing tiles, starting from the lowest-numbered window.
                   </li>
               </ul>
             <t pn="section-8.4.3.2-9">On receiving a SCHC ACK REQ or an All-1 SCHC Fragment:</t>
             <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.2-10">
               <li pn="section-8.4.3.2-10.1">if the receiver knows of any windows with missing tiles for the packet being reassembled, it
-<bcp14>MUST</bcp14> return a SCHC **Compound** ACK for the **missing tiles, starting from the lowest-numbered window.**--lowest-numbered such window:--</li>
+<bcp14>MUST</bcp14> return a SCHC Compound ACK for the missing tiles, starting from the lowest-numbered window.</li>
               <li pn="section-8.4.3.2-10.2">
                 <t pn="section-8.4.3.2-10.2.1">otherwise:
                 </t>
                 <ul spacing="normal" bare="false" empty="false" pn="section-8.4.3.2-10.2.2">
-                  <li pn="section-8.4.3.2-10.2.2.1">if it has received at least one tile, it <bcp14>MUST</bcp14> return a SCHC **Compound** ACK for the highest-numbered window it currently has tiles for,</li>
-                  <li pn="section-8.4.3.2-10.2.2.2">otherwise, it <bcp14>MUST</bcp14> return a SCHC **Compound** ACK for window numbered 0.</li>
+                  <li pn="section-8.4.3.2-10.2.2.1">if it has received at least one tile, it <bcp14>MUST</bcp14> return a SCHC Compound ACK for the highest-numbered window it currently has tiles for,</li>
+                  <li pn="section-8.4.3.2-10.2.2.2">otherwise, it <bcp14>MUST</bcp14> return a SCHC Compound ACK for window numbered 0.</li>
                 </ul>
               </li>
             </ul>
             <t pn="section-8.4.3.2-11">A Profile <bcp14>MAY</bcp14> specify other times and circumstances at which
-a receiver sends a SCHC **Compound** ACK,
-and which window the SCHC **Compound** ACK reports about in these circumstances.</t>
-            <t pn="section-8.4.3.2-12">Upon sending a SCHC **Compound** ACK, the receiver <bcp14>MUST</bcp14> increase the Attempts counter.</t>
+a receiver sends a SCHC Compound ACK,
+and which window the SCHC Compound ACK reports about in these circumstances.</t>
+            <t pn="section-8.4.3.2-12">Upon sending a SCHC Compound ACK, the receiver <bcp14>MUST</bcp14> increase the Attempts counter.</t>
             <t pn="section-8.4.3.2-13">After receiving an All-1 SCHC Fragment,
 a receiver <bcp14>MUST</bcp14> check the integrity of the reassembled SCHC Packet at least every time
-it prepares for sending a SCHC **Compound** ACK for the last window.</t>
+it prepares for sending a SCHC Compound ACK for the last window.</t>
             <t pn="section-8.4.3.2-14">Upon receiving a SCHC Sender-Abort,
 the receiver <bcp14>MAY</bcp14> exit with an error condition.</t>
             <t pn="section-8.4.3.2-15">Upon expiration of the Inactivity Timer,
