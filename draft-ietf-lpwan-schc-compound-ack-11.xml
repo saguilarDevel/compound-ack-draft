@@ -136,12 +136,12 @@ that can be used when SCHC is used on top of a specific LPWAN technology.
     A SCHC Fragment message carries one or several contiguous tiles, which may span multiples windows.
     When sending all tiles from all windows, the last tile is sent in an All-1 SCHC Fragment.
     The SCHC receiver, after receiving the All-1 SCHC Fragment will send a SCHC ACK reporting on the reception of exactly one window of tiles.
-    In case of SCHC Fragment losses, a bitmap is added to the SCHC ACK, where each bit in the bitmap corresponds to a tile in the window.
-    If SCHC Fragment losses span multiples windows, the SCHC receiver will sent one SCHC ACK per window with losses.
+    In case of SCHC Fragment losses, a bitmap is added to the failure SCHC ACK, where each bit in the bitmap corresponds to a tile in the window.
+    If SCHC Fragment losses span multiples windows, the SCHC receiver will sent one failure SCHC ACK per window with losses.
 </t>
 
     <t>The present document describes an extension to the SCHC protocol for frame fragmentation and loss recovery. It defines a SCHC Compound ACK format and procedure, which
-is intended to reduce the number of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode of SCHC. The SCHC Compound ACK extends the SCHC ACK message
+is intended to reduce the number of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode of SCHC. The SCHC Compound ACK extends the failure SCHC ACK message
 format so that it can contain several bitmaps, each bitmap being identified by its corresponding window number.
 </t>
 
@@ -167,7 +167,7 @@ in <xref target="RFC8724"/>.
 <t>The SCHC Compound ACK is a failure SCHC ACK message that can contain several bitmaps, each bitmap being identified by its
 corresponding window number.
     In <xref target="RFC8724"/>, the failure SCHC ACK message only contain one bitmap corresponding to one window.
-    The SCHC Compound ACK extends this format allowing more windows to be acknowledged in a single ACK, reducing the total number of SCHC ACK messages, specially when fragment losses are present in intermediate windows.
+    The SCHC Compound ACK extends this format allowing more windows to be acknowledged in a single ACK, reducing the total number of failure SCHC ACK messages, specially when fragment losses are present in intermediate windows.
 </t>
 
 <t>The SCHC Compound ACK MAY be used in fragmentation modes that use windows and that allow
@@ -204,7 +204,22 @@ reporting the bitmaps of multiple windows at the same time, and MUST NOT be used
 
 <t>In case SCHC Fragment losses are found in any of the windows of the SCHC Packet, the SCHC Compound ACK MAY be used.
 The SCHC Compound ACK message format is shown in <xref target="compound-ack-1byte"/> and <xref target="compound-ack-less-M-padding"/>.
-The SCHC Compound ACK groups the window number (W) with its corresponding bitmap.
+
+</t>
+<t><figure title="SCHC Compound ACK message format" anchor="compound-ack-1byte"><artwork><![CDATA[
+
+  |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
+         |--T-|---M--|-1-|        |...|---M--|        |---M--|
+  +------+----+------+---+--------+...+------+--------+------+~~~~~+
+  |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |00..00| pad |
+  +------+----+------+---+--------+...+------+--------+------+~~~~~+
+                            next L2 Word boundary ->|<-- L2 Word ->|
+
+     Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+]]></artwork></figure></t>
+
+<t>The SCHC Compound ACK groups the window number (W) with its corresponding bitmap.
 Window numbers do not need to be contiguous. However, the window numbers and its corresponding bitmaps included in the SCHC Compound ACK message MUST be ordered from the lowest-numbered to the highest-numbered window.
 Hence, if the bitmap of window number zero is present in the SCHC Compound ACK message, it MUST always be the first one in order and its W number MUST be placed in the SCHC ACK Header.</t>
 
@@ -217,18 +232,7 @@ and therefore they signal the end of the SCHC Compound ACK message.
 </t>
 
 
-<t><figure title="SCHC Compound ACK message format" anchor="compound-ack-1byte"><artwork><![CDATA[
 
-  |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
-         |--T-|---M--|-1-|        |...|---M--|        |---M--|
-  +------+----+------+---+--------+...+------+--------+------+~~~~~+
-  |RuleID|DTag| W=w1 |C=0| Bitmap |...| W=wi | Bitmap |00..00| pad |
-  +------+----+------+---+--------+...+------+--------+------+~~~~~+
-                            next L2 Word boundary ->|<-- L2 Word ->|
-
-     Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
-		
-]]></artwork></figure></t>
 
 <t> <xref target="compound-ack-less-M-padding"/> shows the case when the required padding bits are strictly less than M bits.
     In this case, the layer-2 MTU (Maximum Transmission Unit) does not leave room for any extra window value, let alone any bitmap,
