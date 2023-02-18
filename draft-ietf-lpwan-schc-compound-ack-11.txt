@@ -134,7 +134,7 @@ Internet-Draft              SCHC Compound ACK              February 2023
    in the window.  If SCHC Fragment losses span multiple windows, the
    SCHC receiver will send one failure SCHC ACK per window with losses.
 
-   The present document describes an extension to the SCHC protocol for
+   The present document describes an update to the SCHC protocol for
    frame fragmentation and loss recovery.  It defines a SCHC Compound
    ACK format and procedure, which is intended to reduce the number of
    response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode of
