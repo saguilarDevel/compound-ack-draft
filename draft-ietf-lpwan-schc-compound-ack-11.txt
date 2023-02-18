@@ -79,14 +79,14 @@ Table of Contents
    3.  SCHC Compound ACK . . . . . . . . . . . . . . . . . . . . . .   3
      3.1.  SCHC Compound ACK Message Format  . . . . . . . . . . . .   4
      3.2.  SCHC Compound ACK Behaviour . . . . . . . . . . . . . . .   7
-       8.4.3.  ACK-on-Error Mode . . . . . . . . . . . . . . . . . .   8
-   4.  SCHC Compound ACK Examples  . . . . . . . . . . . . . . . . .  16
-   5.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . . . .  17
-     5.1.  SCHC YANG Data Model Extension  . . . . . . . . . . . . .  17
+       8.4.3.  ACK-on-Error Mode . . . . . . . . . . . . . . . . . .   7
+   4.  SCHC Compound ACK Examples  . . . . . . . . . . . . . . . . .  15
+   5.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . . . .  16
+     5.1.  SCHC YANG Data Model Extension  . . . . . . . . . . . . .  16
      5.2.  SCHC YANG Tree Extension  . . . . . . . . . . . . . . . .  19
    6.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  19
-   7.  Security considerations . . . . . . . . . . . . . . . . . . .  20
-   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  20
+   7.  Security considerations . . . . . . . . . . . . . . . . . . .  19
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  20
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  20
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  20
@@ -123,17 +123,16 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
    In ACK-on-Error mode in [RFC8724] the SCHC Packet is fragmented into
    pieces called tiles, with all tiles of the same size except for the
-   last one, which can be smaller.  Successive tiles are group in
-   windows of fixed size.  A SCHC Fragment message carries one or
-   several contiguous tiles, which may span multiples windows.  When
-   sending all tiles from all windows, the last tile is sent in an All-1
-   SCHC Fragment.  The SCHC receiver, after receiving the All-1 SCHC
-   Fragment will send a SCHC ACK reporting on the reception of exactly
-   one window of tiles.  In case of SCHC Fragment losses, a bitmap is
-   added to the failure SCHC ACK, where each bit in the bitmap
-   corresponds to a tile in the window.  If SCHC Fragment losses span
-   multiples windows, the SCHC receiver will sent one failure SCHC ACK
-   per window with losses.
+   last one, which can be smaller.  Successive tiles are grouped in
+   windows of fixed size.  A SCHC Fragment carries one or several
+   contiguous tiles, which may span multiple windows.  When sending all
+   tiles from all windows, the last tile is sent in an All-1 SCHC
+   Fragment.  The SCHC receiver, after receiving the All-1 SCHC Fragment
+   will send a SCHC ACK reporting on the reception of exactly one window
+   of tiles.  In case of SCHC Fragment losses, a bitmap is added to the
+   failure SCHC ACK, where each bit in the bitmap corresponds to a tile
+   in the window.  If SCHC Fragment losses span multiple windows, the
+   SCHC receiver will send one failure SCHC ACK per window with losses.
 
    The present document describes an extension to the SCHC protocol for
    frame fragmentation and loss recovery.  It defines a SCHC Compound
@@ -162,6 +161,7 @@ Internet-Draft              SCHC Compound ACK              February 2023
    contain one bitmap corresponding to one window.  The SCHC Compound
    ACK extends this format allowing more windows to be acknowledged in a
    single ACK, reducing the total number of failure SCHC ACK messages,
+   specially when fragment losses are present in intermediate windows.
 
 
 
@@ -169,8 +169,6 @@ Zuniga, et al.           Expires 18 August 2023                 [Page 3]
 
 Internet-Draft              SCHC Compound ACK              February 2023
 
-
-   specially when fragment losses are present in intermediate windows.
 
    The SCHC Compound ACK MAY be used in fragmentation modes that use
    windows and that allow reporting the bitmaps of multiple windows at
@@ -217,7 +215,9 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
                  Figure 2: SCHC Compound ACK message format
 
-
+   The SCHC Compound ACK groups the window number (W) with its
+   corresponding bitmap.  Window numbers do not need to be contiguous.
+   However, the window numbers and its corresponding bitmaps included in
 
 
 
@@ -226,9 +226,6 @@ Zuniga, et al.           Expires 18 August 2023                 [Page 4]
 Internet-Draft              SCHC Compound ACK              February 2023
 
 
-   The SCHC Compound ACK groups the window number (W) with its
-   corresponding bitmap.  Window numbers do not need to be contiguous.
-   However, the window numbers and its corresponding bitmaps included in
    the SCHC Compound ACK message MUST be ordered from the lowest-
    numbered to the highest-numbered window.  Hence, if the bitmap of
    window number zero is present in the SCHC Compound ACK message, it
@@ -273,7 +270,10 @@ Internet-Draft              SCHC Compound ACK              February 2023
    to Figure 3, with the last bitmap ending, by construction, on an L2
    Word boundary, therefore resulting in no padding at all.
 
-
+   Figure 4 illustrates a bitmap compression example of a SCHC Compound
+   ACK, where the bitmap of the last window (wi) indicates that the
+   first tile has not been correctly received.  Because the compression
+   algorithm resulted in effective compression, no padding is needed.
 
 
 
@@ -281,11 +281,6 @@ Zuniga, et al.           Expires 18 August 2023                 [Page 5]
 
 Internet-Draft              SCHC Compound ACK              February 2023
 
-
-   Figure 4 illustrates a bitmap compression example of a SCHC Compound
-   ACK, where the bitmap of the last window (wi) indicates that the
-   first tile has not been correctly received.  Because the compression
-   algorithm resulted in effective compression, no padding is needed.
 
      |--- SCHC ACK Header --|- W=w1 -|...|-------- W=wi -------|
             |--T-|---M--|-1-|        |...|---M--|
@@ -317,27 +312,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
    padding would be needed to fill the last L2 Word, M bits at 0 are
    appended to the message before padding is applied.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Zuniga, et al.           Expires 18 August 2023                 [Page 6]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
     |--- SCHC ACK Header --|-W=w1-|...|-------- W=wi -------|
            |--T-|---M--|-1-|      |...|---M--|
     +------+----+------+---+------+...+------+--------------+
@@ -355,6 +329,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
                      Transmitted SCHC Compound ACK
 
          Losses are found in windows W = w1,...,wi; where w1<w2<...<wi
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                 [Page 6]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
      Figure 5: SCHC Compound ACK message format with compressed bitmap
 
@@ -381,19 +363,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
    one window.  Therefore, the SCHC Compound ACK is backwards compatible
    with the SCHC ACK format presented in [RFC8724].
 
-
-
-
-
-
-
-
-
-Zuniga, et al.           Expires 18 August 2023                 [Page 7]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    Also, some flexibility is introduced with respect to [RFC8724], in
    that the receiver has the capability to respond to the All-0 with a
    SCHC Compound ACK or not, depending on certain parameters, like
@@ -413,6 +382,17 @@ Internet-Draft              SCHC Compound ACK              February 2023
    links.
 
    In ACK-on-Error mode, windows are used.
+
+
+
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                 [Page 7]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
    All tiles except the last one and the penultimate one MUST be of
    equal size, hereafter called "regular".  The size of the last tile
@@ -442,14 +422,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
    SCHC Fragment msg   |-----------|
 
-
-
-
-Zuniga, et al.           Expires 18 August 2023                 [Page 8]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
        Figure 23: SCHC Packet Fragmented in Tiles, ACK-on-Error Mode
 
    The W field is wide enough that it unambiguously represents an
@@ -469,6 +441,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
    *  integrity checking shows that the fragmented SCHC Packet has been
       correctly reassembled at the receive end, and this information has
       been conveyed back to the sender, or
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                 [Page 8]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
    *  too many retransmission attempts were made, or
 
@@ -499,13 +479,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
    *  the expiration time of the Retransmission Timer,
 
-
-
-Zuniga, et al.           Expires 18 August 2023                 [Page 9]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    *  the expiration time of the Inactivity Timer,
 
    *  if the last tile is carried in a Regular SCHC Fragment or an All-1
@@ -523,6 +496,15 @@ Internet-Draft              SCHC Compound ACK              February 2023
    *  one Attempts counter, and
 
    *  one Retransmission Timer.
+
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                 [Page 9]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
    For each active pair of RuleID and DTag values, the receiver MUST
    maintain:
@@ -554,14 +536,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
       another, in the order they appear in the SCHC Packet, from the
       start of the SCHC Packet toward its end.
 
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 10]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    Tiles that are not the last one MUST be sent in Regular SCHC
    Fragments specified in Section 8.3.1.1.  The FCN field MUST contain
    the tile index of the first tile sent in that SCHC Fragment.
@@ -580,6 +554,13 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
    In an All-1 SCHC Fragment message, the sender MUST fill the W field
    with the window number of the last tile of the SCHC Packet.
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 10]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
    The fragment sender MUST send SCHC Fragments such that, all together,
    they contain all the tiles of the fragmented SCHC Packet.
@@ -610,14 +591,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
    On Retransmission Timer expiration:
 
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 11]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    *  if the Attempts counter is strictly less than MAX_ACK_REQUESTS,
       the fragment sender MUST send either the All-1 SCHC Fragment or a
       SCHC ACK REQ with the W field corresponding to the last window,
@@ -637,6 +610,13 @@ Internet-Draft              SCHC Compound ACK              February 2023
       -  if the C bit is set, the sender MAY exit successfully.
 
       -  otherwise:
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 11]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
          o  if the Profile mandates that the last tile be sent in an
             All-1 SCHC Fragment:
@@ -666,14 +646,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
                   tile through both a Regular SCHC Fragment and an All-1
                   SCHC Fragment.
 
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 12]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
          o  otherwise:
 
             +  if the SCHC Compound ACK shows no missing tile at the
@@ -693,6 +665,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
       -  MUST send SCHC Fragment messages containing the tiles that are
          reported missing in the SCHC Compound ACK.
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 12]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
       -  then, it MAY send a SCHC ACK REQ with the W field corresponding
          to the last window.
@@ -721,15 +701,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
       pair.  If the receiver is under-resourced to do this, it MUST
       respond to the sender with a SCHC Receiver-Abort.
 
-
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 13]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    On reception of any SCHC F/R message for the RuleID and DTag pair
    being processed, the receiver MUST reset the Inactivity Timer
    pertaining to that RuleID and DTag pair.
@@ -750,6 +721,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
       C/D sublayer.  If the size of the SCHC Fragment Payload exceeds or
       equals the size of one regular tile plus the size of an L2 Word,
       this SHOULD raise an error flag.
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 13]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
    *  otherwise, tiles MUST be assembled based on the a priori known
       tile size.
@@ -778,14 +757,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
       be conducive), it MAY return a SCHC Compound ACK for the missing
       tiles, starting from the lowest-numbered window.
 
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 14]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    On receiving a SCHC ACK REQ or an All-1 SCHC Fragment:
 
    *  if the receiver knows of any windows with missing tiles for the
@@ -807,6 +778,13 @@ Internet-Draft              SCHC Compound ACK              February 2023
 
    Upon sending a SCHC Compound ACK, the receiver MUST increase the
    Attempts counter.
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 14]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
    After receiving an All-1 SCHC Fragment, a receiver MUST check the
    integrity of the reassembled SCHC Packet at least every time it
@@ -832,16 +810,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
    *  at least an All-1 SCHC Fragment has been received and integrity
       checking of the reassembled SCHC Packet is successful.
 
-
-
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 15]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    See Figure 44 for one among several possible examples of a Finite
    State Machine implementing a receiver behavior obeying this
    specification.  The example provided is meant to match the sender
@@ -853,6 +821,26 @@ Internet-Draft              SCHC Compound ACK              February 2023
    Error mode using the SCHC Compound ACK.  In the example, the SCHC
    Packet is fragmented in 14 tiles, with N=3, WINDOW_SIZE=7, M=2 and
    two lost SCHC fragments.  Only 1 compound SCHC ACK is generated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 15]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
            Sender                Receiver
              |-----W=0, FCN=6 ----->|
@@ -888,6 +876,18 @@ Internet-Draft              SCHC Compound ACK              February 2023
        Figure 8: SCHC Compound ACK message format example: Losses are
                          found in windows 00 and 01
 
+5.  SCHC Compound ACK YANG Data Model
+
+   The present document also extends the SCHC YANG data model defined in
+   [I-D.ietf-lpwan-schc-yang-data-model] by including a new leaf in the
+   Ack-on-Error fragmentation mode to describe both the option to use
+   the SCHC Compound ACK, as well as its bitmap format.
+
+5.1.  SCHC YANG Data Model Extension
+
+
+
+
 
 
 
@@ -897,15 +897,6 @@ Zuniga, et al.           Expires 18 August 2023                [Page 16]
 
 Internet-Draft              SCHC Compound ACK              February 2023
 
-
-5.  SCHC Compound ACK YANG Data Model
-
-   The present document also extends the SCHC YANG data model defined in
-   [I-D.ietf-lpwan-schc-yang-data-model] by including a new leaf in the
-   Ack-on-Error fragmentation mode to describe both the option to use
-   the SCHC Compound ACK, as well as its bitmap format.
-
-5.1.  SCHC YANG Data Model Extension
 
    <CODE BEGINS> file "ietf-lpwan-schc-compound-ack@2022-12-02.yang"
    module ietf-lpwan-schc-compound-ack {
@@ -947,13 +938,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
         described in BCP 14 (RFC 2119) (RFC 8174) when, and only when,
         they appear in all capitals, as shown here.
 
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 17]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
         ***************************************************************
 
         This module extends the ietf-schc module to include the
@@ -961,6 +945,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
         It introduces a new leaf for ACK-on-Error defining the format
         of the SCHC Compound ACK, adding the possibility to send
         several bitmaps in a single SCHC ACK message.";
+
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 17]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
      revision 2022-12-02 {
        description
@@ -1002,14 +994,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
            type schc-compound-ack:bitmap-format-type;
            default "schc-compound-ack:bitmap-RFC8724";
            description
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 18]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
               "How the bitmaps are included in the"
               +" SCHC ACK message.";
        }
@@ -1018,6 +1002,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
            when "derived-from(../schc:fragmentation-mode,"
            +" 'schc:fragmentation-mode-ack-on-error')";
            type boolean;
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 18]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
+
            default true;
            description
                "when true ultimate bitmap in the SCHC ACK message
@@ -1056,6 +1048,14 @@ Internet-Draft              SCHC Compound ACK              February 2023
    *  Usage or not of the compressed bitmap format in the last window of
       the SCHC Compound ACK message.
 
+7.  Security considerations
+
+   The current document specifies a message format extension for SCHC.
+   Hence, the same Security Considerations defined in [RFC8724] apply.
+
+8.  IANA Considerations
+
+   This document has no IANA actions.
 
 
 
@@ -1065,15 +1065,6 @@ Zuniga, et al.           Expires 18 August 2023                [Page 19]
 
 Internet-Draft              SCHC Compound ACK              February 2023
 
-
-7.  Security considerations
-
-   The current document specifies a message format extension for SCHC.
-   Hence, the same Security Considerations defined in [RFC8724] apply.
-
-8.  IANA Considerations
-
-   This document has no IANA actions.
 
 9.  Acknowledgements
 
@@ -1114,14 +1105,6 @@ Internet-Draft              SCHC Compound ACK              February 2023
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-
-
-
-Zuniga, et al.           Expires 18 August 2023                [Page 20]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
@@ -1131,6 +1114,13 @@ Internet-Draft              SCHC Compound ACK              February 2023
               Compression and Fragmentation", RFC 8724,
               DOI 10.17487/RFC8724, April 2020,
               <https://www.rfc-editor.org/rfc/rfc8724>.
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 20]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
 
 10.2.  Informative References
 
@@ -1172,12 +1162,6 @@ Authors' Addresses
    Email: Laurent.Toutain@imt-atlantique.fr
 
 
-
-Zuniga, et al.           Expires 18 August 2023                [Page 21]
-
-Internet-Draft              SCHC Compound ACK              February 2023
-
-
    Sandra Cespedes
    Concordia University
    1455 De Maisonneuve Blvd. W.
@@ -1186,12 +1170,28 @@ Internet-Draft              SCHC Compound ACK              February 2023
    Email: sandra.cespedes@concordia.ca
 
 
+
+
+
+Zuniga, et al.           Expires 18 August 2023                [Page 21]
+
+Internet-Draft              SCHC Compound ACK              February 2023
+
+
    Diego Wistuba
    NIC Labs, Universidad de Chile
    Av. Almte. Blanco Encalada 1975
    Santiago
    Chile
    Email: wistuba@niclabs.cl
+
+
+
+
+
+
+
+
 
 
 

@@ -132,12 +132,8 @@ them, some differences exist with respect to the transmission characteristics, p
 that can be used when SCHC is used on top of a specific LPWAN technology.
 </t>
 <t>
-    In ACK-on-Error mode in <xref target="RFC8724"/> the SCHC Packet is fragmented into pieces called tiles, with all tiles of the same size except for the last one, which can be smaller. Successive tiles are group in windows of fixed size.
-    A SCHC Fragment message carries one or several contiguous tiles, which may span multiples windows.
-    When sending all tiles from all windows, the last tile is sent in an All-1 SCHC Fragment.
-    The SCHC receiver, after receiving the All-1 SCHC Fragment will send a SCHC ACK reporting on the reception of exactly one window of tiles.
-    In case of SCHC Fragment losses, a bitmap is added to the failure SCHC ACK, where each bit in the bitmap corresponds to a tile in the window.
-    If SCHC Fragment losses span multiples windows, the SCHC receiver will sent one failure SCHC ACK per window with losses.
+   In ACK-on-Error mode in <xref target="RFC8724"/> the SCHC Packet is fragmented into pieces called tiles, with all tiles of the same size except for the last one, which can be smaller. Successive tiles are grouped in windows of fixed size.
+    A SCHC Fragment carries one or several contiguous tiles, which may span multiple windows. When sending all tiles from all windows, the last tile is sent in an All-1 SCHC Fragment. The SCHC receiver, after receiving the All-1 SCHC Fragment will send a SCHC ACK reporting on the reception of exactly one window of tiles. In case of SCHC Fragment losses, a bitmap is added to the failure SCHC ACK, where each bit in the bitmap corresponds to a tile in the window. If SCHC Fragment losses span multiple windows, the SCHC receiver will send one failure SCHC ACK per window with losses.
 </t>
 
     <t>The present document describes an extension to the SCHC protocol for frame fragmentation and loss recovery. It defines a SCHC Compound ACK format and procedure, which
