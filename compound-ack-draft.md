@@ -90,7 +90,7 @@ REMOVE--> Each different SCHC LPWAN technology profile MUST specify how the
              |-----W=0, FCN=2 --X-->|
              |-----W=0, FCN=1 ----->|
              |-----W=0, FCN=0 ----->| Bitmap: 1111011
-         (no ACK)
+         (no ACK - no DL enable)
              |-----W=1, FCN=6 ----->|
              |-----W=1, FCN=5 ----->|
              |-----W=1, FCN=4 ----->|

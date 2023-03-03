@@ -6,18 +6,18 @@ lpwan Working Group                                           JC. Zuniga
 Internet-Draft                                                     Cisco
 Updates: 8724 (if approved)                                     C. Gomez
 Intended status: Standards Track                              S. Aguilar
-Expires: 23 July 2023               Universitat Politecnica de Catalunya
+Expires: 9 June 2023                Universitat Politecnica de Catalunya
                                                               L. Toutain
                                                           IMT-Atlantique
                                                              S. Cespedes
                                                     Concordia University
                                                               D. Wistuba
                                           NIC Labs, Universidad de Chile
-                                                         19 January 2023
+                                                         6 December 2022
 
 
                            SCHC Compound ACK
-                 draft-ietf-lpwan-schc-compound-ack-10
+                 draft-ietf-lpwan-schc-compound-ack-09
 
 Abstract
 
@@ -47,20 +47,20 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 July 2023.
+   This Internet-Draft will expire on 9 June 2023.
 
 
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 1]
+Zuniga, et al.             Expires 9 June 2023                  [Page 1]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
 Copyright Notice
 
-   Copyright (c) 2023 IETF Trust and the persons identified as the
+   Copyright (c) 2022 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -84,7 +84,7 @@ Table of Contents
    5.  SCHC Compound ACK YANG Data Model . . . . . . . . . . . . . .  16
      5.1.  SCHC YANG Data Model Extension  . . . . . . . . . . . . .  16
      5.2.  SCHC YANG Tree Extension  . . . . . . . . . . . . . . . .  18
-   6.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  19
+   6.  SCHC Compound ACK Parameters  . . . . . . . . . . . . . . . .  18
    7.  Security considerations . . . . . . . . . . . . . . . . . . .  19
    8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    9.  Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  19
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 2]
+Zuniga, et al.             Expires 9 June 2023                  [Page 2]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    SCHC offers a great level of flexibility to accommodate all these
@@ -165,9 +165,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 3]
+Zuniga, et al.             Expires 9 June 2023                  [Page 3]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    The SCHC Compound ACK groups the window number (W) with its
@@ -185,10 +185,10 @@ Internet-Draft              SCHC Compound ACK               January 2023
    been correctly received (C=1), as defined in [RFC8724].
 
                   |-- SCHC ACK Header --|
-                           |--T-|---M--| 1 |
-                  +--------+----+------+---+~~~~~~~~~~~~~~~~~~
-                  | RuleID |DTag|   W  |C=1| padding as needed
-                  +--------+----+------+---+~~~~~~~~~~~~~~~~~~
+                           |--T-|-M-| 1 |
+                  +--------+----+---+---+~~~~~~~~~~~~~~~~~~
+                  | RuleID |DTag| W |C=1| padding as needed
+                  +--------+----+---+---+~~~~~~~~~~~~~~~~~~
 
       Figure 1: SCHC Success ACK message format, as defined in RFC8724
 
@@ -199,7 +199,7 @@ Internet-Draft              SCHC Compound ACK               January 2023
    fill the last L2 Word, M bits at 0 MUST be appended after the last
    bitmap, and then padding is applied as needed (see Figure 2).  Since
    window number 0, if present in the message, is placed as w1, the M
-   bits set to zero can’t be confused with window number 0, and
+   bits set to zero can't be confused with window number 0, and
    therefore they signal the end of the SCHC Compound ACK message.
 
      |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
@@ -221,9 +221,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 4]
+Zuniga, et al.             Expires 9 June 2023                  [Page 4]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
      |--- SCHC ACK Header --|- W=w1 -|...|---- W=wi -----|
@@ -277,9 +277,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 5]
+Zuniga, et al.             Expires 9 June 2023                  [Page 5]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    Figure 5 illustrates another bitmap compression example of a SCHC
@@ -310,7 +310,7 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
      Figure 5: SCHC Compound ACK message format with compressed bitmap
 
-   If a SCHC sender gets a SCHC Compound ACK with invalid W’s, such as
+   If a SCHC sender gets a SCHC Compound ACK with invalid W's, such as
    duplicate W values or W values not sent yet, it MUST discard the
    whole SCHC Compound ACK message.
 
@@ -333,9 +333,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 6]
+Zuniga, et al.             Expires 9 June 2023                  [Page 6]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    The SCHC ACK format, as presented in [RFC8724], can be considered a
@@ -389,9 +389,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 7]
+Zuniga, et al.             Expires 9 June 2023                  [Page 7]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
            +---------------------------------------------...-----------+
@@ -445,9 +445,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 8]
+Zuniga, et al.             Expires 9 June 2023                  [Page 8]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    *  the value of WINDOW_SIZE, which MUST be strictly less than 2^N,
@@ -501,9 +501,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                  [Page 9]
+Zuniga, et al.             Expires 9 June 2023                  [Page 9]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    A Regular SCHC Fragment message carries in its payload one or more
@@ -557,9 +557,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 10]
+Zuniga, et al.             Expires 9 June 2023                 [Page 10]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    A Profile MAY specify other times at which the fragment sender MUST
@@ -613,9 +613,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 11]
+Zuniga, et al.             Expires 9 June 2023                 [Page 11]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
                *  if the last of these SCHC Fragment messages is not an
@@ -669,9 +669,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 12]
+Zuniga, et al.             Expires 9 June 2023                 [Page 12]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    *  the receiver SHOULD check if the DTag value has not recently been
@@ -725,9 +725,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 13]
+Zuniga, et al.             Expires 9 June 2023                 [Page 13]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
       -  Otherwise, padding bits MUST be discarded.  This is possible
@@ -781,9 +781,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 14]
+Zuniga, et al.             Expires 9 June 2023                 [Page 14]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    On the Attempts counter exceeding MAX_ACK_REQUESTS, the receiver MUST
@@ -837,9 +837,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 15]
+Zuniga, et al.             Expires 9 June 2023                 [Page 15]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
             Figure 7: SCHC Compound ACK message sequence example
@@ -893,9 +893,9 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 16]
+Zuniga, et al.             Expires 9 June 2023                 [Page 16]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
         forth in Section 4.c of the IETF Trust's Legal Provisions
@@ -949,30 +949,29 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 17]
+Zuniga, et al.             Expires 9 June 2023                 [Page 17]
 
-Internet-Draft              SCHC Compound ACK               January 2023
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
        description
          "type used in rules";
      }
 
-     augment "/schc:schc/schc:rule/schc:nature/"
-       +"schc:fragmentation/schc:mode/schc:ack-on-error" {
+     augment "/schc:schc/schc:rule/schc:nature/schc:fragmentation"
+        +"/schc:mode/schc:ack-on-error" {
        leaf bitmap-format {
            when "derived-from(../schc:fragmentation-mode,"
-           +" 'schc:fragmentation-mode-ack-on-error')";
+            +" 'schc:fragmentation-mode-ack-on-error')";
            type schc-compound-ack:bitmap-format-type;
            default "schc-compound-ack:bitmap-RFC8724";
            description
-              "How the bitmaps are included in the"
-              +" SCHC ACK message.";
+              "How the bitmaps are included in the SCHC ACK message.";
        }
 
            leaf last-bitmap-compression {
            when "derived-from(../schc:fragmentation-mode,"
-           +" 'schc:fragmentation-mode-ack-on-error')";
+            +" 'schc:fragmentation-mode-ack-on-error')";
            type boolean;
            default true;
            description
@@ -993,22 +992,10 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-   augment /schc:schc/schc:rule/schc:nature/schc:fragmentation/
-           schc:mode/schc:ack-on-error:
-       +--rw bitmap-format?   schc-compound-ack:bitmap-format-type
+augment /schc:schc/schc:rule/schc:nature/schc:fragmentation/schc:mode/schc:ack-on-error:
+    +--rw bitmap-format?   schc-compound-ack:bitmap-format-type
 
-             Figure 10: SCHC YANG Tree - Compound ACK extension
-
-
-
-
-
-
-
-Zuniga, et al.            Expires 23 July 2023                 [Page 18]
-
-Internet-Draft              SCHC Compound ACK               January 2023
-
+          Figure 10: SCHC YANG Tree - Compound ACK extension
 
 6.  SCHC Compound ACK Parameters
 
@@ -1017,6 +1004,14 @@ Internet-Draft              SCHC Compound ACK               January 2023
    listed in Annex D of [RFC8724].
 
    *  Usage or not of the SCHC Compound ACK message.
+
+
+
+
+Zuniga, et al.             Expires 9 June 2023                 [Page 18]
+
+Internet-Draft              SCHC Compound ACK              December 2022
+
 
    *  Usage or not of the compressed bitmap format in the last window of
       the SCHC Compound ACK message.
@@ -1057,21 +1052,22 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 10.1.  Normative References
 
-
-
-
-
-Zuniga, et al.            Expires 23 July 2023                 [Page 19]
-
-Internet-Draft              SCHC Compound ACK               January 2023
-
-
    [I-D.ietf-lpwan-schc-yang-data-model]
               Minaburo, A. and L. Toutain, "Data Model for Static
               Context Header Compression (SCHC)", Work in Progress,
               Internet-Draft, draft-ietf-lpwan-schc-yang-data-model-21,
               February 2021, <http://www.ietf.org/internet-drafts/draft-
               ietf-lpwan-schc-yang-data-model-14.txt>.
+
+
+
+
+
+
+Zuniga, et al.             Expires 9 June 2023                 [Page 19]
+
+Internet-Draft              SCHC Compound ACK              December 2022
+
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1111,23 +1107,22 @@ Authors' Addresses
    Email: carles.gomez@upc.edu
 
 
-
-
-
-
-
-
-Zuniga, et al.            Expires 23 July 2023                 [Page 20]
-
-Internet-Draft              SCHC Compound ACK               January 2023
-
-
    Sergio Aguilar
    Universitat Politecnica de Catalunya
    C/Esteve Terradas, 7
    08860 Castelldefels
    Spain
    Email: sergio.aguilar.romero@upc.edu
+
+
+
+
+
+
+
+Zuniga, et al.             Expires 9 June 2023                 [Page 20]
+
+Internet-Draft              SCHC Compound ACK              December 2022
 
 
    Laurent Toutain
@@ -1173,4 +1168,12 @@ Internet-Draft              SCHC Compound ACK               January 2023
 
 
 
-Zuniga, et al.            Expires 23 July 2023                 [Page 21]
+
+
+
+
+
+
+
+
+Zuniga, et al.             Expires 9 June 2023                 [Page 21]
