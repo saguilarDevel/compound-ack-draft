@@ -141,11 +141,11 @@ Internet-Draft              SCHC Compound ACK                 March 2023
    SCHC.  The SCHC Compound ACK extends the failure SCHC ACK message
    format so that it can contain several bitmaps, each bitmap being
    identified by its corresponding window number.  The SCHC Compound ACK
-   is backwards compatible with failure SCHC ACK as defined in
-   [RFC8724], and introduces flexibility, as the receiver has the
-   capability to respond to the All-0 SCHC Fragment, providing more
-   downlinks opportunities, and therefore adjusting to the delay
-   requirement of the application.
+   is backwards compatible with the SCHC ACK as defined in [RFC8724],
+   and introduces flexibility, as the receiver has the capability to
+   respond to the All-0 SCHC Fragment, providing more downlink
+   opportunities, and therefore adjusting to the delay requirements of
+   the application.
 
 2.  Terminology
 

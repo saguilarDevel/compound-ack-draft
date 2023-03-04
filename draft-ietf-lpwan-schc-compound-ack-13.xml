@@ -139,7 +139,7 @@ that can be used when SCHC is used on top of a specific LPWAN technology.
     <t>The present document updates the SCHC protocol for frame fragmentation and loss recovery. It defines a SCHC Compound ACK format and procedure, which
 is intended to reduce the number of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode of SCHC. The SCHC Compound ACK extends the failure SCHC ACK message
 format so that it can contain several bitmaps, each bitmap being identified by its corresponding window number.
-The SCHC Compound ACK is backwards compatible with failure SCHC ACK as defined in <xref target="RFC8724"/>, and introduces flexibility, as the receiver has the capability to respond to the All-0 SCHC Fragment, providing more downlinks opportunities, and therefore adjusting to the delay requirement of the application.
+The SCHC Compound ACK is backwards compatible with the SCHC ACK as defined in <xref target="RFC8724"/>, and introduces flexibility, as the receiver has the capability to respond to the All-0 SCHC Fragment, providing more downlink opportunities, and therefore adjusting to the delay requirements of the application.
 </t>
 
 
