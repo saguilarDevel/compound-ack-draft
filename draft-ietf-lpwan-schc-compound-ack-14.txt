@@ -382,7 +382,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
    with the SCHC ACK format presented in [RFC8724].  The receiver can
    infer if the sender does not supports the SCHC Compound ACK, as the
    sender does not resend any tiles from windows that are not the first
-   one in the SCHC Compound ACK.
+   one in the SCHC Compound ACK and more ACKs are needed.
 
 
 
