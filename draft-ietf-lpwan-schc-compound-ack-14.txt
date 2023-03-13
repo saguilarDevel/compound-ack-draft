@@ -380,7 +380,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
    special SCHC Compound ACK case, in which it reports only the tiles of
    one window.  Therefore, the SCHC Compound ACK is backwards compatible
    with the SCHC ACK format presented in [RFC8724].  The receiver can
-   infer if the sender does not supports the SCHC Compound ACK, as the
+   suspect if the sender does not support the SCHC Compound ACK, if the
    sender does not resend any tiles from windows that are not the first
    one in the SCHC Compound ACK and more ACKs are needed.
 
