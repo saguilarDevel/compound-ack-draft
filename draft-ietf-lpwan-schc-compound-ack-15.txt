@@ -4,7 +4,7 @@
 
 lpwan Working Group                                           JC. Zuniga
 Internet-Draft                                                     Cisco
-Updates: 8724 (if approved)                                     C. Gomez
+Updates: 8724, 9363 (if approved)                               C. Gomez
 Intended status: Standards Track                              S. Aguilar
 Expires: 15 September 2023          Universitat Politecnica de Catalunya
                                                               L. Toutain
@@ -22,11 +22,12 @@ Expires: 15 September 2023          Universitat Politecnica de Catalunya
 Abstract
 
    The present document updates the SCHC (Static Context Header
-   Compression and fragmentation) protocol RFC8724.  It defines a SCHC
-   Compound ACK message format and procedure, which are intended to
-   reduce the number of response transmissions (i.e., SCHC ACKs) in the
-   ACK-on-Error mode, by accumulating bitmaps of several windows in a
-   single SCHC message (i.e., the SCHC Compound ACK).
+   Compression and fragmentation) protocol [RFC8724] and the
+   corresponding Yang Module [RFC9636].  It defines a SCHC Compound ACK
+   message format and procedure, which are intended to reduce the number
+   of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode,
+   by accumulating bitmaps of several windows in a single SCHC message
+   (i.e., the SCHC Compound ACK).
 
    Both message format and procedure are generic, so they can be used,
    for instance, by any of the four Low Power Wide Area Networks
@@ -49,7 +50,6 @@ Status of This Memo
    material or to cite them other than as "work in progress."
 
    This Internet-Draft will expire on 15 September 2023.
-
 
 
 
@@ -382,9 +382,9 @@ Internet-Draft              SCHC Compound ACK                 March 2023
    with the SCHC ACK format presented in [RFC8724].  The receiver can
    suspect if the sender does not support the SCHC Compound ACK, if the
    sender does not resend any tiles from windows that are not the first
-   one in the SCHC Compound ACK and more ACKs are needed.
-
-
+   one in the SCHC Compound ACK and more ACKs are needed.  In that case,
+   the receiver can send SCHC Compound ACKs with only one window of
+   tiles.
 
 
 
@@ -921,16 +921,16 @@ Internet-Draft              SCHC Compound ACK                 March 2023
    module ietf-lpwan-schc-compound-ack {
      yang-version 1.1;
      namespace "urn:ietf:params:xml:ns:yang:"
-        +"ietf-lpwan-schc-compound-ack";
+             + "ietf-lpwan-schc-compound-ack";
      prefix schc-compound-ack;
 
      import ietf-schc {
-         prefix schc;
+       prefix schc;
      }
 
-    organization
-      "IETF IPv6 over Low Power Wide-Area Networks (lpwan)
-       working group";
+     organization
+       "IETF IPv6 over Low Power Wide-Area Networks (lpwan)
+        working group";
      contact
        "WG Web:   <https://datatracker.ietf.org/wg/lpwan/about/>
         WG List:  <mailto:lp-wan@ietf.org>
@@ -939,9 +939,9 @@ Internet-Draft              SCHC Compound ACK                 March 2023
         Editor:   Juan Carlos Zuniga
           <mailto:j.c.zuniga@ieee.org>";
      description
-        "
-        Copyright (c) 2021 IETF Trust and the persons identified as
+       "Copyright (c) 2023 IETF Trust and the persons identified as
         authors of the code.  All rights reserved.
+
         Redistribution and use in source and binary forms, with or
         without modification, is permitted pursuant to, and subject to
         the license terms contained in, the Simplified BSD License set
@@ -956,9 +956,11 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
         Relating to IETF Documents
         (https://trustee.ietf.org/license-info).
+
         This version of this YANG module is part of RFC XXXX
         (https://www.rfc-editor.org/info/rfcXXXX); see the RFC itself
         for full legal notices.
+
         The key words 'MUST', 'MUST NOT', 'REQUIRED', 'SHALL', 'SHALL
         NOT', 'SHOULD', 'SHOULD NOT', 'RECOMMENDED', 'NOT RECOMMENDED',
         'MAY', and 'OPTIONAL' in this document are to be interpreted as
@@ -973,7 +975,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
         of the SCHC Compound ACK, adding the possibility to send
         several bitmaps in a single SCHC ACK message.";
 
-     revision 2022-12-02 {
+     revision 2023-03-16 {
        description
          "Initial version for RFC YYYY ";
        reference
@@ -1000,8 +1002,6 @@ Internet-Draft              SCHC Compound ACK                 March 2023
      typedef bitmap-format-type {
        type identityref {
          base bitmap-format-base-type;
-       }
-       description
 
 
 
@@ -1010,35 +1010,33 @@ Zuniga, et al.          Expires 15 September 2023              [Page 18]
 Internet-Draft              SCHC Compound ACK                 March 2023
 
 
+       }
+       description
          "type used in rules";
      }
 
      augment "/schc:schc/schc:rule/schc:nature/"
-       +"schc:fragmentation/schc:mode/schc:ack-on-error" {
+           + "schc:fragmentation/schc:mode/schc:ack-on-error" {
        leaf bitmap-format {
-           when "derived-from(../schc:fragmentation-mode,"
-           +" 'schc:fragmentation-mode-ack-on-error')";
-           type schc-compound-ack:bitmap-format-type;
-           default "schc-compound-ack:bitmap-RFC8724";
-           description
-              "How the bitmaps are included in the"
-              +" SCHC ACK message.";
+         when "derived-from(../schc:fragmentation-mode,"
+            + " 'schc:fragmentation-mode-ack-on-error')";
+         type schc-compound-ack:bitmap-format-type;
+         default "schc-compound-ack:bitmap-RFC8724";
+         description "How the bitmaps are included in the"
+                   + " SCHC ACK message.";
        }
-
-           leaf last-bitmap-compression {
-           when "derived-from(../schc:fragmentation-mode,"
-           +" 'schc:fragmentation-mode-ack-on-error')";
-           type boolean;
-           default true;
-           description
-               "when true ultimate bitmap in the SCHC ACK message
-                can be compressed";
-           }
-
+       leaf last-bitmap-compression {
+         when "derived-from(../schc:fragmentation-mode,"
+            + " 'schc:fragmentation-mode-ack-on-error')";
+         type boolean;
+         default "true";
+         description
+           "when true ultimate bitmap in the SCHC ACK message
+                       can be compressed";
+       }
        description
          "added to SCHC rules";
      }
-
    }
    <CODE ENDS>
 
@@ -1053,6 +1051,8 @@ Internet-Draft              SCHC Compound ACK                 March 2023
        +--rw bitmap-format?   schc-compound-ack:bitmap-format-type
 
              Figure 10: SCHC YANG Tree - Compound ACK extension
+
+
 
 
 
