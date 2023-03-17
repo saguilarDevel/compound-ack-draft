@@ -330,7 +330,7 @@ since in the baseline SCHC specification a SCHC ACK reports only one bitmap for 
 Compound ACK specification extends the SCHC ACK message format so that it can contain several bitmaps, each bitmap being identified by its corresponding
 window number.</t>
 <t>The SCHC ACK format, as presented in <xref target="RFC8724"/>, can be considered a special SCHC Compound ACK case, in which it reports only the tiles of one window. Therefore, the SCHC Compound ACK is backwards compatible with the SCHC ACK format presented in <xref target="RFC8724"/>.
-The receiver can suspect if the sender does not support the SCHC Compound ACK, if the sender does not resend any tiles from windows that are not the first one in the SCHC Compound ACK and more ACKs are needed.</t>
+The receiver can suspect if the sender does not support the SCHC Compound ACK, if the sender does not resend any tiles from windows that are not the first one in the SCHC Compound ACK and more ACKs are needed. In that case, the receiver can send SCHC Compound ACKs with only one window of tiles.</t>
 <t>Also, some flexibility is introduced with respect to <xref target="RFC8724"/>, in that the receiver has the capability to respond to the All-0 with
 a SCHC Compound ACK or not, depending on certain parameters, like network conditions, sender buffer/chache size, supported application delay. Note that even though the protocol allows for such flexibility, the
 actual decision criteria is not specified in this document. The application MUST set expiration timer values according to when the feedback is expected to be received, e.g., after the All-0 or after the All-1.</t>
