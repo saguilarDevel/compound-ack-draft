@@ -6,14 +6,14 @@ lpwan Working Group                                           JC. Zuniga
 Internet-Draft                                                     Cisco
 Updates: 8724, 9363 (if approved)                               C. Gomez
 Intended status: Standards Track                              S. Aguilar
-Expires: 15 September 2023          Universitat Politecnica de Catalunya
+Expires: 19 September 2023          Universitat Politecnica de Catalunya
                                                               L. Toutain
                                                           IMT-Atlantique
                                                              S. Cespedes
                                                     Concordia University
                                                               D. Wistuba
                                           NIC Labs, Universidad de Chile
-                                                           14 March 2023
+                                                           18 March 2023
 
 
                            SCHC Compound ACK
@@ -22,11 +22,11 @@ Expires: 15 September 2023          Universitat Politecnica de Catalunya
 Abstract
 
    The present document updates the SCHC (Static Context Header
-   Compression and fragmentation) protocol [RFC8724] and the
-   corresponding Yang Module [RFC9636].  It defines a SCHC Compound ACK
-   message format and procedure, which are intended to reduce the number
-   of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode,
-   by accumulating bitmaps of several windows in a single SCHC message
+   Compression and fragmentation) protocol RFC8724 and the corresponding
+   Yang Module RFC9363.  It defines a SCHC Compound ACK message format
+   and procedure, which are intended to reduce the number of response
+   transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode, by
+   accumulating bitmaps of several windows in a single SCHC message
    (i.e., the SCHC Compound ACK).
 
    Both message format and procedure are generic, so they can be used,
@@ -49,11 +49,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 15 September 2023.
+   This Internet-Draft will expire on 19 September 2023.
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 1]
+Zuniga, et al.          Expires 19 September 2023               [Page 1]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 2]
+Zuniga, et al.          Expires 19 September 2023               [Page 2]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -165,7 +165,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 3]
+Zuniga, et al.          Expires 19 September 2023               [Page 3]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -221,7 +221,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 4]
+Zuniga, et al.          Expires 19 September 2023               [Page 4]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -277,7 +277,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 5]
+Zuniga, et al.          Expires 19 September 2023               [Page 5]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -333,7 +333,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 6]
+Zuniga, et al.          Expires 19 September 2023               [Page 6]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -389,7 +389,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 7]
+Zuniga, et al.          Expires 19 September 2023               [Page 7]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -445,7 +445,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 8]
+Zuniga, et al.          Expires 19 September 2023               [Page 8]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -501,7 +501,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023               [Page 9]
+Zuniga, et al.          Expires 19 September 2023               [Page 9]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -557,7 +557,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 10]
+Zuniga, et al.          Expires 19 September 2023              [Page 10]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -613,7 +613,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 11]
+Zuniga, et al.          Expires 19 September 2023              [Page 11]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -669,7 +669,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 12]
+Zuniga, et al.          Expires 19 September 2023              [Page 12]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -725,7 +725,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 13]
+Zuniga, et al.          Expires 19 September 2023              [Page 13]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -781,7 +781,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 14]
+Zuniga, et al.          Expires 19 September 2023              [Page 14]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -837,7 +837,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 15]
+Zuniga, et al.          Expires 19 September 2023              [Page 15]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -893,7 +893,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 16]
+Zuniga, et al.          Expires 19 September 2023              [Page 16]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -911,9 +911,9 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 5.  SCHC Compound ACK YANG Data Model
 
    The present document also extends the SCHC YANG data model defined in
-   [I-D.ietf-lpwan-schc-yang-data-model] by including a new leaf in the
-   Ack-on-Error fragmentation mode to describe both the option to use
-   the SCHC Compound ACK, as well as its bitmap format.
+   [RFC9363] by including a new leaf in the Ack-on-Error fragmentation
+   mode to describe both the option to use the SCHC Compound ACK, as
+   well as its bitmap format.
 
 5.1.  SCHC YANG Data Model Extension
 
@@ -949,7 +949,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 17]
+Zuniga, et al.          Expires 19 September 2023              [Page 17]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -1005,7 +1005,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 18]
+Zuniga, et al.          Expires 19 September 2023              [Page 18]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -1061,7 +1061,7 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 19]
+Zuniga, et al.          Expires 19 September 2023              [Page 19]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
@@ -1117,17 +1117,10 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 20]
+Zuniga, et al.          Expires 19 September 2023              [Page 20]
 
 Internet-Draft              SCHC Compound ACK                 March 2023
 
-
-   [I-D.ietf-lpwan-schc-yang-data-model]
-              Minaburo, A. and L. Toutain, "Data Model for Static
-              Context Header Compression (SCHC)", Work in Progress,
-              Internet-Draft, draft-ietf-lpwan-schc-yang-data-model-21,
-              February 2021, <http://www.ietf.org/internet-drafts/draft-
-              ietf-lpwan-schc-yang-data-model-14.txt>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1143,6 +1136,11 @@ Internet-Draft              SCHC Compound ACK                 March 2023
               Compression and Fragmentation", RFC 8724,
               DOI 10.17487/RFC8724, April 2020,
               <https://www.rfc-editor.org/info/rfc8724>.
+
+   [RFC9363]  Minaburo, A. and L. Toutain, "A YANG Data Model for Static
+              Context Header Compression (SCHC)", RFC 9363,
+              DOI 10.17487/RFC9363, March 2023,
+              <https://www.rfc-editor.org/info/rfc9363>.
 
 10.2.  Informative References
 
@@ -1167,22 +1165,19 @@ Authors' Addresses
    Email: carles.gomez@upc.edu
 
 
-
-
-
-
-
-
-Zuniga, et al.          Expires 15 September 2023              [Page 21]
-
-Internet-Draft              SCHC Compound ACK                 March 2023
-
-
    Sergio Aguilar
    Universitat Politecnica de Catalunya
    C/Esteve Terradas, 7
    08860 Castelldefels
    Spain
+
+
+
+Zuniga, et al.          Expires 19 September 2023              [Page 21]
+
+Internet-Draft              SCHC Compound ACK                 March 2023
+
+
    Email: sergio.aguilar.romero@upc.edu
 
 
@@ -1229,4 +1224,9 @@ Internet-Draft              SCHC Compound ACK                 March 2023
 
 
 
-Zuniga, et al.          Expires 15 September 2023              [Page 22]
+
+
+
+
+
+Zuniga, et al.          Expires 19 September 2023              [Page 22]

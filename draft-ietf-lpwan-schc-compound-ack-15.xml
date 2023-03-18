@@ -94,7 +94,7 @@
       </address>
    </author>
 
-    <date year="2023" month="March" day="14"/>
+    <date year="2023" month="March" day="18"/>
 
 
     <workgroup>lpwan Working Group</workgroup>
@@ -103,7 +103,7 @@
     <abstract>
 
 
-<t>The present document updates the SCHC (Static Context Header Compression and fragmentation) protocol [RFC8724] and the corresponding Yang Module [RFC9363]. It defines a SCHC Compound ACK message
+<t>The present document updates the SCHC (Static Context Header Compression and fragmentation) protocol RFC8724 and the corresponding Yang Module RFC9363. It defines a SCHC Compound ACK message
 format and procedure, which are intended to reduce the number of response transmissions (i.e., SCHC ACKs) in the ACK-on-Error mode, by accumulating bitmaps of several windows in a single SCHC message
 (i.e., the SCHC Compound ACK). </t>
 <t>Both message format and procedure are generic, so they can be used, for instance, by any of the four Low Power Wide Area Networks (LPWANs) technologies defined in RFC8376, being Sigfox, LoRaWAN, NB-IoT and IEEE 802.15.4w.
@@ -725,7 +725,7 @@ Only 1 compound SCHC ACK is generated.</t>
 <section anchor="schc-compound-ack-yang-model" title="SCHC Compound ACK YANG Data Model">
 
 
-<t>The present document also extends the SCHC YANG data model defined in <xref target="I-D.ietf-lpwan-schc-yang-data-model"/> by including
+<t>The present document also extends the SCHC YANG data model defined in <xref target="RFC9363"/> by including
 a new leaf in the Ack-on-Error fragmentation mode to describe both the option to use the SCHC Compound ACK, as well as its bitmap format. </t>
 
 <section anchor="yang-model" title="SCHC YANG Data Model Extension">
