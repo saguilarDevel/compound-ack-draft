@@ -813,7 +813,7 @@ module ietf-lpwan-schc-compound-ack {
       base bitmap-format-base-type;
     }
     description
-      "type used in rules";
+      "Type of bitmap used in rules.";
   }
 
   augment "/schc:schc/schc:rule/schc:nature/schc:fragmentation" +
