@@ -882,7 +882,7 @@ augment /schc:schc/schc:rule/schc:nature/schc:fragmentation/
 
 <section anchor="security-considerations" title="Security considerations">
 
-<t>The current document specifies a message format extension for SCHC. Hence, the same Security Considerations defined in <xref target="RFC8724"/> apply.</t>
+<t>The current document specifies a message format extension for SCHC. Hence, the same Security Considerations defined in <xref target="RFC8724"/> and in <xref target="RFC9363"/> apply.</t>
 
 </section>
 <section anchor="ianaconsiderations" title="IANA Considerations">
