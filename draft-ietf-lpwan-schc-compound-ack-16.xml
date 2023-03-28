@@ -15,7 +15,7 @@
 <?rfc compact="yes"?>
 <?rfc toc="yes"?>
 
-<rfc ipr="trust200902" submissionType="IETF" consensus="true" docName="draft-ietf-lpwan-schc-compound-ack-15" category="std" updates="8724,9363">
+<rfc ipr="trust200902" submissionType="IETF" consensus="true" docName="draft-ietf-lpwan-schc-compound-ack-16" category="std" updates="8724,9363">
 
   <front>
    <title abbrev="SCHC Compound ACK">
@@ -94,7 +94,7 @@
       </address>
    </author>
 
-    <date year="2023" month="March" day="18"/>
+    <date year="2023" month="March" day="28"/>
 
 
     <workgroup>lpwan Working Group</workgroup>
